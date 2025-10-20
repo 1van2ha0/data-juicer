@@ -9,12 +9,11 @@ project_name: 'mimicgen_generation'
 # Note: Generated HDF5 files are written by Isaac's recorder to the paths specified in each sample's output_file
 # This export_path is for saving the processed JSONL with generation_result for auditing
 dataset_path: './demos/mimicgen/generation_tasks.jsonl'
-export_path: './outputs/mimicgen/generation_results.jsonl'
-export_type: 'jsonl'
+export_path: './outputs/mimicgen/generation_results/'
 
 # Distributed executor
-# executor_type: ray
-# ray_address: local  # set to 'auto' to join an existing Ray cluster
+executor_type: ray
+ray_address: local  # set to 'auto' to join an existing Ray cluster
 
 # Global runtime
 np: 3               # global worker processes; per-op num_proc below will cap actor concurrency
@@ -26,7 +25,7 @@ process:
       # Required task setup
       task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-Mimic-v0'
       num_envs: 8
-      generation_num_trials: 125
+      generation_num_trials: 5
 
       # Device and simulator options
       device: 'cuda:auto'        # auto-bind GPU per actor by rank

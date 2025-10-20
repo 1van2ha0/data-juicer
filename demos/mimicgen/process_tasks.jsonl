@@ -1,0 +1,7 @@
+{"text": "Process dataset 1", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated1.hdf5", "output_file": "./demos/mimicgen/mimic_generated1.hdf5"}
+{"text": "Process dataset 2", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated2.hdf5", "output_file": "./demos/mimicgen/mimic_generated2.hdf5"}
+{"text": "Process dataset 3", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated3.hdf5", "output_file": "./demos/mimicgen/mimic_generated3.hdf5"}
+{"text": "Process dataset 4", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated4.hdf5", "output_file": "./demos/mimicgen/mimic_generated4.hdf5"}
+{"text": "Process dataset 5", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated5.hdf5", "output_file": "./demos/mimicgen/mimic_generated5.hdf5"}
+{"text": "Process dataset 6", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated6.hdf5", "output_file": "./demos/mimicgen/mimic_generated6.hdf5"}
+{"text": "Process dataset 7", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "annotated_file": "./output/annotated/dataset_annotated7.hdf5", "output_file": "./demos/mimicgen/mimic_generated7.hdf5"}

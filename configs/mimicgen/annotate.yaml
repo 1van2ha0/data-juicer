@@ -1,0 +1,50 @@
+# Isaac Lab annotation configuration for mimicgen
+# This configuration runs an annotation task using Isaac Sim.
+
+# --- PREPARATION ---
+# 1. Make sure you have a JSONL file at the specified `dataset_path`.
+#    Each line should be a JSON object pointing to your HDF5 demo files, e.g.:
+#    {"input_file": "path/to/your/demo1.hdf5", "output_file": "path/to/your/annotated_demo1.hdf5"}
+#
+# 2. The paths in the JSONL file should be absolute or relative to where you run the command.
+
+# --- EXECUTION ---
+# Run this configuration with the following command from the root of the data-juicer directory:
+# python tools/process_data.py --config configs/mimicgen/test.yaml
+
+# Use absolute path or path relative to the root of the data-juicer project
+dataset_path: './demos/mimicgen/annotation_tasks.jsonl'
+export_path: './demos/mimicgen/annotation_results/'
+
+# Number of parallel processes. For Isaac Sim, it's best to start with 1.
+np: 1
+
+executor_type: ray
+ray_address: local
+
+process:
+  - annotate_demos_mapper:
+      # Required: The name of the task in Isaac Lab.
+      # This should match the environment the demonstrations were recorded in.
+      task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Mimic-v0'
+
+      num_proc: 4
+      # gpu_required: 0.33
+      accelerator: cuda 
+      
+      # Run Isaac Sim in headless mode (no GUI). Recommended for servers.
+      headless: true
+      
+      # Enable cameras, even in headless mode. This is often required for vision-based tasks.
+      enable_cameras: true
+      
+      # Set to true if your task requires the Pinocchio library for IK controllers.
+      enable_pinocchio: false
+      
+      # --- Advanced Options (usually default is fine) ---
+      # Keys in the JSONL file for input and output paths.
+      input_file_key: 'input_file'
+      output_file_key: 'output_file'
+      
+      # Whether to extract detailed annotation data into the output JSONL.
+      extract_annotations: true

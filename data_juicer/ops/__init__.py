@@ -27,6 +27,7 @@ with timing_context('Importing operator modules'):
         Grouper,
         Mapper,
         Selector,
+        Simulator,
     )
     from .load import load_ops
 
@@ -38,6 +39,7 @@ __all__ = [
     'Selector',
     'Grouper',
     'Aggregator',
+    'Simulator',
     'UNFORKABLE',
     'NON_STATS_FILTERS',
     'OPERATORS',

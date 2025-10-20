@@ -1,0 +1,42 @@
+# Example config to generate a Mimic dataset with Isaac Lab via Data-Juicer
+# Input dataset should be a JSONL file with one task per line, e.g.:
+# {"text": "gen-1", "input_file": "/path/to/annotated.hdf5", "output_file": "/path/to/mimic.hdf5"}
+# {"text": "gen-2", "input_file": "/path/to/annotated2.hdf5", "output_file": "/path/to/mimic2.hdf5"}
+
+project_name: 'mimicgen_generation'
+
+# The input task list (JSONL) and the final export of task results
+# Note: Generated HDF5 files are written by Isaac's recorder to the paths specified in each sample's output_file
+# This export_path is for saving the processed JSONL with generation_result for auditing
+dataset_path: './demos/mimicgen/generation_tasks.jsonl'
+export_path: './outputs/mimicgen/generation_results.jsonl'
+export_type: 'jsonl'
+
+# Distributed executor
+# executor_type: ray
+# ray_address: local  # set to 'auto' to join an existing Ray cluster
+
+# Global runtime
+np: 3               # global worker processes; per-op num_proc below will cap actor concurrency
+text_keys: 'text'
+
+# Operator pipeline
+process:
+  - generate_dataset_mapper:
+      # Required task setup
+      task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-Mimic-v0'
+      num_envs: 8
+      generation_num_trials: 125
+
+      # Device and simulator options
+      device: 'cuda:auto'        # auto-bind GPU per actor by rank
+      headless: true             # set false if you need rendering windows
+      enable_cameras: true
+
+      # IO keys – should match field names in the input JSONL
+      input_file_key: 'input_file'
+      output_file_key: 'output_file'
+
+      # Concurrency – number of Ray actors (disposable) running in parallel
+      num_proc: 4
+      accelerator: 'cuda'

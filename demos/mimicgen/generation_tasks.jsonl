@@ -1,0 +1,8 @@
+{"text": "gen-task-1", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated1.hdf5"}
+{"text": "gen-task-2", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated2.hdf5"}
+{"text": "gen-task-3", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated3.hdf5"}
+{"text": "gen-task-4", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated4.hdf5"}
+{"text": "gen-task-5", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated5.hdf5"}
+{"text": "gen-task-6", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated6.hdf5"}
+{"text": "gen-task-7", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated7.hdf5"}
+{"text": "gen-task-8", "input_file": "/mnt/data/yian/isaac_tmp/dataset/annotated_dataset.hdf5", "output_file": "./demos/mimicgen/mimic_generated8.hdf5"}

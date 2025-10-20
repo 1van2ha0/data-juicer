@@ -1,0 +1,7 @@
+{"text": "Annotate dataset 1", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated.hdf5"}
+{"text": "Annotate dataset 2", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated2.hdf5"}
+{"text": "Annotate dataset 3", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated3.hdf5"}
+{"text": "Annotate dataset 4", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated4.hdf5"}
+{"text": "Annotate dataset 5", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated5.hdf5"}
+{"text": "Annotate dataset 6", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated6.hdf5"}
+{"text": "Annotate dataset 7", "input_file": "/mnt/data/isaac_tmp/dataset/dataset.hdf5", "output_file": "./output/annotated/dataset_annotated7.hdf5"}

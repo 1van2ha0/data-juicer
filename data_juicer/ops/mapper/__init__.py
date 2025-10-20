@@ -1,6 +1,8 @@
 from .annotation.human_preference_annotation_mapper import (
     HumanPreferenceAnnotationMapper,
 )
+from .annotate_demos_mapper import AnnotateDemosMapper
+from .generate_dataset_mapper import GenerateDatasetMapper
 from .audio_add_gaussian_noise_mapper import AudioAddGaussianNoiseMapper
 from .audio_ffmpeg_wrapped_mapper import AudioFFmpegWrappedMapper
 from .calibrate_qa_mapper import CalibrateQAMapper
@@ -96,6 +98,8 @@ from .video_whole_body_pose_estimation_mapper import VideoWholeBodyPoseEstimatio
 from .whitespace_normalization_mapper import WhitespaceNormalizationMapper
 
 __all__ = [
+    "AnnotateDemosMapper",
+    "GenerateDatasetMapper",
     "AudioAddGaussianNoiseMapper",
     "AudioFFmpegWrappedMapper",
     "CalibrateQAMapper",

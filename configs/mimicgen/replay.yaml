@@ -1,0 +1,38 @@
+project_name: 'replay-mimic-demos'
+
+# Input task list (JSONL). Each line corresponds to one replay task.
+dataset_path: './demos/mimicgen/replay_tasks.jsonl'
+
+# Optional global outputs; operator writes media under per-task unique dirs.
+export_path: './outputs/replay/'
+
+# Use Ray so Simulator operators run in Actor processes with isolation
+executor_type: ray
+ray_address: auto
+
+# Keep text field simple for DJ bookkeeping
+text_keys: 'text'
+
+# Number of driver processes. Concurrency for Simulator is controlled by op.num_proc.
+np: 1
+
+process:
+  - replay_demos_mapper:
+      # Core task configuration (can be overridden per-sample where applicable)
+      # This 'task' parameter is REQUIRED by the operator.
+      task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-v0'
+      task: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-v0'
+      headless: true
+      device: 'cuda:auto'
+
+      # Video settings (per-sample overrides supported)
+      video: true
+      camera_view_list: ['table', 'wrist']
+      save_depth: false
+
+      # Ray parallelism for this operator (number of concurrent actors)
+      num_proc: 1
+
+      # Input/Output key mapping (sample schema)
+      input_file_key: 'dataset_file'
+      video_dir_key: 'video_dir'

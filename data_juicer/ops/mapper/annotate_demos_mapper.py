@@ -381,7 +381,7 @@ class AnnotateDemosMapper(Simulator):
         subtask_signals = annotated_episode.data["obs"]["datagen_info"]["subtask_term_signals"]
         
         for signal_name, signal_flags in subtask_signals.items():
-            if not torch.any(signal_flags):
+            if not torch.any(torch.tensor(signal_flags)):
                 logger.warning(f"Subtask '{signal_name}' not completed")
                 return False
         

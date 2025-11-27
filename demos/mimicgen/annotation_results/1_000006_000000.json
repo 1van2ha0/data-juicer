@@ -1,0 +1,1 @@
+{"text":"Annotate dataset 7","input_file":"\/mnt\/data\/isaac_tmp\/dataset\/dataset.hdf5","output_file":".\/output\/annotated\/dataset_annotated7.hdf5","annotation_result":{"output_file":"\/data-juicer\/output\/annotated\/dataset_annotated7.hdf5","success":true,"successful_episodes":10,"total_episodes":10}}

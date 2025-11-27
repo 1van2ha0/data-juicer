@@ -3,12 +3,12 @@ from typing import Any, Dict, List, Optional
 
 from loguru import logger
 
-from ..base_op import OPERATORS, UNFORKABLE, Simulator
+from ..base_op import OPERATORS, UNFORKABLE, Mapper
 
 
 @OPERATORS.register_module("annotate_demos_mapper")
 @UNFORKABLE.register_module("annotate_demos_mapper")
-class AnnotateDemosMapper(Simulator):
+class AnnotateDemosMapper(Mapper):
     """
     Automatically annotate robot demonstration episodes using Isaac Lab.
     

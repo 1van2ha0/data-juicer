@@ -1,0 +1,60 @@
+2025-11-27 18:32:41.608 | INFO     | data_juicer.config.config:init_setup_from_cfg:682 - dataset_path config is set and a valid local path
+2025-11-27 18:32:41.608 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-11-27 18:32:43.637 | DEBUG    | data_juicer.config.config:timing_context:43 - Initializing setup from config took 2.05 seconds
+2025-11-27 18:32:43.657 | DEBUG    | data_juicer.config.config:timing_context:43 - Updating operator process took 0.02 seconds
+2025-11-27 18:32:43.657 | INFO     | data_juicer.config.config:config_backup:998 - Back up the input config file [/data-juicer/configs/mimicgen/annotate.yaml] into the work_dir [/data-juicer/demos/mimicgen]
+2025-11-27 18:32:43.661 | INFO     | data_juicer.config.config:display_config:1019 - Configuration table: 
+2025-11-27 18:32:43.662 | DEBUG    | data_juicer.config.config:timing_context:43 - Total config initialization time took 2.18 seconds
+2025-11-27 18:32:43.662 | INFO     | __main__:timing_context:15 - Loading configuration took 2.18 seconds
+2025-11-27 18:32:43.663 | INFO     | data_juicer.core.executor.ray_executor:__init__:59 - Initializing Ray ...
+2025-11-27 18:32:43.664 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-11-27 18:32:43.664 | INFO     | data_juicer.core.data.dataset_builder:__init__:48 - found dataset_path setting: /data-juicer/demos/mimicgen/annotation_tasks.jsonl
+2025-11-27 18:32:43.664 | INFO     | data_juicer.core.data.load_strategy:get_strategy_class:84 - Getting strategy class for exec: ray, data_type: local, data_source: None
+2025-11-27 18:32:43.664 | INFO     | data_juicer.core.executor.ray_executor:__init__:72 - Preparing exporter...
+2025-11-27 18:32:43.664 | WARNING  | data_juicer.core.ray_exporter:_get_export_format:116 - export_path "/data-juicer/demos/mimicgen/annotation_results" does not have a suffix. We will use "jsonl" as the default export type.
+2025-11-27 18:32:43.665 | INFO     | __main__:timing_context:15 - Initializing executor took 0.00 seconds
+2025-11-27 18:32:43.665 | INFO     | data_juicer.core.executor.ray_executor:run:115 - Loading dataset with Ray...
+2025-11-27 18:32:43.668 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-11-27 18:32:43.924 | INFO     | data_juicer.core.data.load_strategy:load_data:236 - Using resolved path for loading ray dataset: /data-juicer/demos/mimicgen/annotation_tasks.jsonl
+2025-11-27 18:32:43.924 | INFO     | data_juicer.core.data.load_strategy:load_data:280 - Try to load data as json.
+2025-11-27 18:32:47.964 | INFO     | data_juicer.core.executor.ray_executor:run:120 - Preparing process operators...
+2025-11-27 18:32:47.964 | INFO     | data_juicer.ops.mapper.annotate_demos_mapper:__init__:112 - Initialized AnnotateDemosMapper: task=Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Mimic-v0, device=cuda:auto, headless=True, batch_size=1 (one task per actor)
+2025-11-27 18:32:47.965 | INFO     | data_juicer.core.executor.ray_executor:run:129 - Processing data...
+2025-11-27 18:32:47.966 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-11-27 18:32:47.967 | INFO     | data_juicer.utils.ray_utils:get_ray_nodes_info:96 - Ray nodes:
+[{'NodeID': 'e30bfc4b564678accaa8876aa3c58fda31da3c1a4345f6dbb046888a', 'Alive': True, 'NodeManagerAddress': '10.0.2.6', 'NodeManagerHostname': 'dsw-286154-6db99cfb4b-6p6l4', 'NodeManagerPort': 37759, 'ObjectManagerPort': 45379, 'ObjectStoreSocketName': '/tmp/ray/session_2025-11-27_18-32-41_689266_495176/sockets/plasma_store', 'RayletSocketName': '/tmp/ray/session_2025-11-27_18-32-41_689266_495176/sockets/raylet', 'MetricsExportPort': 61143, 'NodeName': '10.0.2.6', 'RuntimeEnvAgentPort': 49799, 'DeathReason': 0, 'DeathReasonMessage': '', 'alive': True, 'Resources': {'object_store_memory': 18528497664.0, 'GPU': 1.0, 'CPU': 8.0, 'node:__internal_head__': 1.0, 'accelerator_type:L20': 1.0, 'memory': 43233161216.0, 'node:10.0.2.6': 1.0}, 'Labels': {'ray.io/node_id': 'e30bfc4b564678accaa8876aa3c58fda31da3c1a4345f6dbb046888a'}}]
+2025-11-27 18:32:47.988 | INFO     | data_juicer.utils.ray_utils:get_ray_nodes_info:118 - Ray cluster info:
+{'e30bfc4b564678accaa8876aa3c58fda31da3c1a4345f6dbb046888a': {'free_memory': 54556, 'cpu_count': 8, 'gpu_count': 1, 'gpus_memory': [49140], 'free_gpus_memory': [48640]}}
+2025-11-27 18:32:47.989 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-11-27 18:32:47.989 | WARNING  | data_juicer.utils.process_utils:calculate_ray_np:276 - Neither the required cuda memory nor gpu of Op[annotate_demos_mapper] is specified. We recommend specifying the `mem_required` field or `gpu_required` field in the config file. You can reference data_juicer/config/config_all.yaml.Set the `gpu_required` to 1 now.
+2025-11-27 18:32:47.990 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-11-27 18:32:47.991 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-11-27 18:32:47.992 | INFO     | data_juicer.core.executor.ray_executor:__exit__:30 - Removing tmp dir /data-juicer/demos/mimicgen/.tmp/01000000 ...
+2025-11-27 18:32:47.992 | ERROR    | __main__:<module>:36 - An error has been caught in function '<module>', process 'MainProcess' (495176), thread 'MainThread' (139846495629952):
+Traceback (most recent call last):
+
+> File "/data-juicer/tools/process_data.py", line 36, in <module>
+    main()
+    └ <function main at 0x7f2f18d83d80>
+
+  File "/data-juicer/tools/process_data.py", line 32, in main
+    executor.run()
+    │        └ <function RayExecutor.run at 0x7f3086a64ea0>
+    └ <data_juicer.core.executor.ray_executor.RayExecutor object at 0x7f3086a5a650>
+
+  File "/data-juicer/data_juicer/core/executor/ray_executor.py", line 131, in run
+    dataset.process(ops)
+    │       │       └ [<data_juicer.ops.mapper.annotate_demos_mapper.AnnotateDemosMapper object at 0x7f2f10584110>]
+    │       └ <function RayDataset.process at 0x7f3086a64fe0>
+    └ <data_juicer.core.data.ray_dataset.RayDataset object at 0x7f2f18c439d0>
+
+  File "/data-juicer/data_juicer/core/data/ray_dataset.py", line 152, in process
+    calculate_ray_np(operators)
+    │                └ [<data_juicer.ops.mapper.annotate_demos_mapper.AnnotateDemosMapper object at 0x7f2f10584110>]
+    └ <function calculate_ray_np at 0x7f2f51647740>
+
+  File "/data-juicer/data_juicer/utils/process_utils.py", line 392, in calculate_ray_np
+    raise ValueError(error_str)
+                     └ "GPU resource is not enough for the current operators configuration. At least 4.0 gpus are required, but only 1.0 gpus are av...
+
+ValueError: GPU resource is not enough for the current operators configuration. At least 4.0 gpus are required, but only 1.0 gpus are available. Please consider configuring the 'gpu_required' of cuda operators to a smaller value or increase the number of GPUs.

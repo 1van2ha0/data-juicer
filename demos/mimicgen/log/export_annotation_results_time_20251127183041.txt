@@ -1,0 +1,49 @@
+2025-11-27 18:30:41.137 | INFO     | data_juicer.config.config:init_setup_from_cfg:682 - dataset_path config is set and a valid local path
+2025-11-27 18:30:41.137 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-11-27 18:30:43.117 | DEBUG    | data_juicer.config.config:timing_context:43 - Initializing setup from config took 2.00 seconds
+2025-11-27 18:30:43.135 | DEBUG    | data_juicer.config.config:timing_context:43 - Updating operator process took 0.02 seconds
+2025-11-27 18:30:43.135 | INFO     | data_juicer.config.config:config_backup:998 - Back up the input config file [/data-juicer/configs/mimicgen/annotate.yaml] into the work_dir [/data-juicer/demos/mimicgen]
+2025-11-27 18:30:43.139 | INFO     | data_juicer.config.config:display_config:1019 - Configuration table: 
+2025-11-27 18:30:43.140 | DEBUG    | data_juicer.config.config:timing_context:43 - Total config initialization time took 2.11 seconds
+2025-11-27 18:30:43.140 | INFO     | __main__:timing_context:15 - Loading configuration took 2.11 seconds
+2025-11-27 18:30:43.142 | INFO     | data_juicer.core.executor.ray_executor:__init__:59 - Initializing Ray ...
+2025-11-27 18:30:43.143 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-11-27 18:30:43.143 | INFO     | data_juicer.core.data.dataset_builder:__init__:48 - found dataset_path setting: /data-juicer/demos/mimicgen/annotation_tasks.jsonl
+2025-11-27 18:30:43.143 | INFO     | data_juicer.core.data.load_strategy:get_strategy_class:84 - Getting strategy class for exec: ray, data_type: local, data_source: None
+2025-11-27 18:30:43.143 | INFO     | data_juicer.core.executor.ray_executor:__init__:72 - Preparing exporter...
+2025-11-27 18:30:43.143 | WARNING  | data_juicer.core.ray_exporter:_get_export_format:116 - export_path "/data-juicer/demos/mimicgen/annotation_results" does not have a suffix. We will use "jsonl" as the default export type.
+2025-11-27 18:30:43.144 | INFO     | __main__:timing_context:15 - Initializing executor took 0.00 seconds
+2025-11-27 18:30:43.144 | INFO     | data_juicer.core.executor.ray_executor:run:115 - Loading dataset with Ray...
+2025-11-27 18:30:43.146 | ERROR    | __main__:<module>:36 - An error has been caught in function '<module>', process 'MainProcess' (493702), thread 'MainThread' (140088092009088):
+Traceback (most recent call last):
+
+> File "/data-juicer/tools/process_data.py", line 36, in <module>
+    main()
+    └ <function main at 0x7f675929c4a0>
+
+  File "/data-juicer/tools/process_data.py", line 32, in main
+    executor.run()
+    │        └ <function RayExecutor.run at 0x7f68c6e793a0>
+    └ <data_juicer.core.executor.ray_executor.RayExecutor object at 0x7f6791d07ed0>
+
+  File "/data-juicer/data_juicer/core/executor/ray_executor.py", line 116, in run
+    dataset = self.datasetbuilder.load_dataset(num_proc=load_data_np)
+              │    │              │                     └ None
+              │    │              └ <function DatasetBuilder.load_dataset at 0x7f675a1e4040>
+              │    └ <data_juicer.core.data.dataset_builder.DatasetBuilder object at 0x7f68c6e6a110>
+              └ <data_juicer.core.executor.ray_executor.RayExecutor object at 0x7f6791d07ed0>
+
+  File "/data-juicer/data_juicer/core/data/dataset_builder.py", line 126, in load_dataset
+    dataset = stra.load_data(**kwargs)
+              │    │           └ {'num_proc': None}
+              │    └ <function RayLocalJsonDataLoadStrategy.load_data at 0x7f67592891c0>
+              └ <data_juicer.core.data.load_strategy.RayLocalJsonDataLoadStrategy object at 0x7f675b3fbe90>
+
+  File "/data-juicer/data_juicer/core/data/load_strategy.py", line 202, in load_data
+    from data_juicer.core.data.ray_dataset import RayDataset
+
+  File "/data-juicer/data_juicer/core/data/ray_dataset.py", line 174
+    elif isinstance(op, Mapper):
+    ^^^^
+
+SyntaxError: invalid syntax

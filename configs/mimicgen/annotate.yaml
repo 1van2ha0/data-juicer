@@ -28,8 +28,8 @@ process:
       # This should match the environment the demonstrations were recorded in.
       task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Mimic-v0'
 
-      num_proc: 4
-      # gpu_required: 0.33
+      num_proc: 2
+      gpu_required: 0.5
       accelerator: cuda 
       
       # Run Isaac Sim in headless mode (no GUI). Recommended for servers.

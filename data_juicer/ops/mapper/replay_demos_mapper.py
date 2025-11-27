@@ -5,12 +5,12 @@ from typing import Dict, List, Optional, Any
 from loguru import logger
 
 
-from ..base_op import OPERATORS, UNFORKABLE, Simulator
+from ..base_op import OPERATORS, UNFORKABLE, Mapper
 
 
 @OPERATORS.register_module("replay_demos_mapper")
 @UNFORKABLE.register_module("replay_demos_mapper")
-class ReplayDemosMapper(Simulator):
+class ReplayDemosMapper(Mapper):
     """
     Replay demonstrations with Isaac Lab environments and record videos.
     """

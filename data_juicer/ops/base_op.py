@@ -17,7 +17,6 @@ UNFORKABLE = Registry("Unforkable")
 NON_STATS_FILTERS = Registry("Non-stats Filters")
 TAGGING_OPS = Registry("Tagging Operators")
 ATTRIBUTION_FILTERS = Registry("Attribution Filters")
-SIMULATORS = Registry("Simulators")
 DEFAULT_BATCH_SIZE = 1000
 
 
@@ -392,128 +391,6 @@ class Mapper(OP):
 
     def run(self, dataset, *, exporter=None, tracer=None):
         dataset = super(Mapper, self).run(dataset)
-        new_dataset = dataset.map(
-            self.process,
-            num_proc=self.runtime_np(),
-            with_rank=self.use_cuda(),
-            batch_size=self.batch_size,
-            desc=self._name + "_process",
-        )
-        if tracer:
-            tracer.trace_mapper(self._name, dataset, new_dataset, self.text_key)
-        free_models()
-        return new_dataset
-
-
-class Simulator(OP):
-    """Base class for simulation operators requiring main thread execution.
-    
-    Simulator is designed for heavy simulation workloads (e.g., Isaac Sim)
-    that require:
-    - Main thread execution (not worker threads)
-    - Process isolation
-    - Explicit resource management
-    
-    In Ray mode, Simulator automatically uses Ray Actors for execution.
-    In Default mode, Simulator works like Mapper with spawn process.
-    """
-    
-    # _batched_op = True
-    # _accelerator = "cuda"
-    # _requires_actor_execution = True  # Marker for Ray mode
-    
-    def __init__(self, *args, **kwargs):
-        """
-        Base class that conducts simulation operations.
-        
-        Same parameters as Mapper.
-        """
-        super(Simulator, self).__init__(*args, **kwargs)
-        
-        # runtime wrappers (identical to Mapper)
-        if self.is_batched_op():
-            self.process = catch_map_batches_exception(
-                self.process_batched, skip_op_error=self.skip_op_error, op_name=self._name
-            )
-        else:
-            self.process = catch_map_single_exception(
-                self.process_single, skip_op_error=self.skip_op_error, op_name=self._name
-            )
-    
-    # set the process method is not allowed to be overridden
-    @classmethod
-    def __init_subclass__(cls, **kwargs):
-        not_allowed_list = ["process"]
-        for method_name in not_allowed_list:
-            if method_name in cls.__dict__:
-                raise TypeError(
-                    f"Method {method_name} cannot be overridden by subclass "
-                    f"{cls.__name__}. Please implement {method_name}_single "
-                    f"or {method_name}_batched."
-                )
-    
-    def __call__(self, *args, **kwargs):
-        return self.process(*args, **kwargs)
-    
-    def process_batched(self, samples, *args, **kwargs):
-        """Process a batch of samples.
-        
-        Must be implemented by subclass.
-        
-        :param samples: dict of lists (batch format)
-        :return: processed samples (dict of lists)
-        """
-        # Default implementation: call process_single for each sample
-        # (identical to Mapper.process_batched)
-        keys = samples.keys()
-        first_key = next(iter(keys))
-        num_samples = len(samples[first_key])
-        
-        new_keys = {}
-        for i in range(num_samples):
-            this_sample = {key: samples[key][i] for key in keys}
-            res_sample = self.process_single(this_sample, *args, **kwargs)
-            res_keys = res_sample.keys()
-            for key in res_keys:
-                if key not in keys:
-                    if key not in new_keys:
-                        new_keys.update({key: []})
-                    new_keys[key].append(res_sample[key])
-                else:
-                    samples[key][i] = res_sample[key]
-        
-        for k, v in new_keys.items():
-            samples[k] = v
-        
-        return samples
-    
-    def process_single(self, sample):
-        """Process a single sample.
-        
-        For sample level, sample --> sample
-        
-        :param sample: sample to process
-        :return: processed sample
-        """
-        raise NotImplementedError
-    
-    def cleanup(self):
-        """Cleanup resources (called by Ray Actor on shutdown).
-        
-        Must be implemented by subclass to properly release:
-        - Simulation environments
-        - GPU contexts
-        - File handles
-        - etc.
-        """
-        raise NotImplementedError
-    
-    def run(self, dataset, *, exporter=None, tracer=None):
-        """Run simulator on dataset.
-        
-        Identical to Mapper.run() for consistency.
-        """
-        dataset = super(Simulator, self).run(dataset)
         new_dataset = dataset.map(
             self.process,
             num_proc=self.runtime_np(),

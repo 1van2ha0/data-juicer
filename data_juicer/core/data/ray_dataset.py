@@ -170,7 +170,7 @@ class RayDataset(DJDataset):
         try:
             batch_size = getattr(op, "batch_size", 1) if op.is_batched_op() else 1
             
-            if op._name in ['annotate_demos_mapper']:
+            if op._name in ['annotate_demos_mapper', 'replay_demos_mapper', 'generate_dataset_mapper' 'replay_demos_randomized_mapper']:
                 logger.info(f"==================issac flag================")
                 self.data = self.data.map_batches(
                     op.process,

@@ -17,7 +17,7 @@ text_keys: 'text'
 np: 1
 
 process:
-  - replay_demos_mapper:
+  - replay_demos_randomized_mapper:
       # Core task configuration (can be overridden per-sample where applicable)
       # This 'task' parameter is REQUIRED by the operator.
       task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-v0'

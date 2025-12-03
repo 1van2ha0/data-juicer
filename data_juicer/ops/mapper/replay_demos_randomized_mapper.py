@@ -29,7 +29,7 @@ class ReplayDemosRandomizedMapper(Mapper):
         enable_pinocchio: bool = False,
         dual_arm: bool = False,
         device: str = "cuda:auto",
-        randomize_visuals: bool = False,
+        randomize_visuals: bool = True,
 
         # Input/Output keys in JSON metadata
         input_file_key: str = "dataset_file",
@@ -266,6 +266,8 @@ class ReplayDemosRandomizedMapper(Mapper):
         # Build env config
         env_cfg = parse_env_cfg(self.task_name, device=self.device, num_envs=1)
         env_cfg.env_name = self.task_name
+        env_cfg.eval_mode = True
+        env_cfg.eval_type = "all"
 
         # Inject visual randomization if enabled
         if self.randomize_visuals:

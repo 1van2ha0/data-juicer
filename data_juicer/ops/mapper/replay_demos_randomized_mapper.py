@@ -30,6 +30,7 @@ class ReplayDemosRandomizedMapper(Mapper):
         dual_arm: bool = False,
         device: str = "cuda:auto",
         randomize_visuals: bool = True,
+        visual_randomization_config: Optional[str] = None,
 
         # Input/Output keys in JSON metadata
         input_file_key: str = "dataset_file",
@@ -77,6 +78,15 @@ class ReplayDemosRandomizedMapper(Mapper):
         self.dual_arm = dual_arm
         self.device = device
         self.randomize_visuals = randomize_visuals
+        
+        self.visual_randomization_config = None
+        if visual_randomization_config:
+            import yaml
+            if os.path.exists(visual_randomization_config):
+                with open(visual_randomization_config, 'r') as f:
+                    self.visual_randomization_config = yaml.safe_load(f)
+            else:
+                logger.warning(f"Visual randomization config file not found: {visual_randomization_config}")
 
         self.input_file_key = input_file_key
         self.output_file_key = output_file_key
@@ -152,69 +162,22 @@ class ReplayDemosRandomizedMapper(Mapper):
         from isaaclab.utils.assets import NVIDIA_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
         import isaaclab_tasks.manager_based.manipulation.stack.mdp.franka_stack_events as franka_stack_events
 
-        # Define texture lists
-        self.TEXTURES_SKYBOX = [
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Cloudy/abandoned_parking_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Cloudy/evening_road_01_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Cloudy/lakeside_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/autoshop_01_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/carpentry_shop_01_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/hospital_room_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/hotel_room_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/old_bus_depot_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/small_empty_house_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Indoor/surgery_4k.hdr",
-            f"{NVIDIA_NUCLEUS_DIR}/Assets/Skies/Studio/photo_studio_01_4k.hdr",
-        ]
-
-        self.TEXTURES_WOOD_AND_STONE = [
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Ash/Ash_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Bamboo_Planks/Bamboo_Planks_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Birch/Birch_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Cherry/Cherry_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Mahogany_Planks/Mahogany_Planks_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Oak/Oak_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Plywood/Plywood_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Timber/Timber_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Timber_Cladding/Timber_Cladding_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Wood/Walnut_Planks/Walnut_Planks_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Stone/Marble/Marble_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Steel_Stainless/Steel_Stainless_BaseColor.png",
-        ]
-
-        self.TEXTURES_METAL = [
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Aluminum_Cast/Aluminum_Cast_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Aluminum_Polished/Aluminum_Polished_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Brass/Brass_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Bronze/Bronze_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Brushed_Antique_Copper/Brushed_Antique_Copper_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Cast_Metal_Silver_Vein/Cast_Metal_Silver_Vein_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Copper/Copper_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Gold/Gold_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Iron/Iron_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/RustedMetal/RustedMetal_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Silver/Silver_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Steel_Carbon/Steel_Carbon_BaseColor.png",
-            f"{NVIDIA_NUCLEUS_DIR}/Materials/Base/Metals/Steel_Stainless/Steel_Stainless_BaseColor.png",
-        ]
-
-        # Configuration for object randomization
-        self.OBJECT_RANDOMIZATION_CONFIG = [
-            {
-                "name": "randomize_table_visual_material",
-                "asset_name": "table",
-                "textures": self.TEXTURES_WOOD_AND_STONE,
-                "default_texture": f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/Materials/Textures/DemoTable_TableBase_BaseColor.png",
-            },
-            {
-                "name": "randomize_robot_arm_visual_texture",
-                "asset_name": "robot",
-                "textures": self.TEXTURES_METAL,
-            },
-        ]
-
         self._isaac_initialized = True
         logger.info("Isaac Sim SimulationApp initialized for replay")
+
+    def _resolve_config_paths(self, config):
+        from isaaclab.utils.assets import NVIDIA_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
+
+        def _replace_recursive(item):
+            if isinstance(item, str):
+                return item.format(NVIDIA_NUCLEUS_DIR=NVIDIA_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR=ISAAC_NUCLEUS_DIR)
+            elif isinstance(item, list):
+                return [_replace_recursive(i) for i in item]
+            elif isinstance(item, dict):
+                return {k: _replace_recursive(v) for k, v in item.items()}
+            return item
+
+        return _replace_recursive(config)
 
     def _inject_visual_randomization(self, env_cfg):
         """Inject visual randomization terms into the environment configuration."""
@@ -222,42 +185,81 @@ class ReplayDemosRandomizedMapper(Mapper):
         from isaaclab.managers import SceneEntityCfg
         import isaaclab_tasks.manager_based.manipulation.stack.mdp.franka_stack_events as franka_stack_events
 
+        if not self.visual_randomization_config:
+            return
+
         # Disable scene replication to allow USD-level randomization (materials)
         if hasattr(env_cfg, "scene"):
             env_cfg.scene.replicate_physics = False
 
-        # 1. Randomize Light (Global)
-        env_cfg.events.randomize_light = EventTerm(
-            func=franka_stack_events.randomize_scene_lighting_domelight,
-            mode="reset",
-            params={
-                "intensity_range": (1500.0, 10000.0),
-                "color_variation": 0.4,
-                "textures": self.TEXTURES_SKYBOX,
-                "default_intensity": 3000.0,
-                "default_color": (0.75, 0.75, 0.75),
-                "default_texture": "",
-            },
-        )
+        # Resolve paths in config
+        resolved_config = self._resolve_config_paths(self.visual_randomization_config)
 
-        # 2. Randomize Objects (from config)
-        for config in self.OBJECT_RANDOMIZATION_CONFIG:
-            params = {
-                "asset_cfg": SceneEntityCfg(config["asset_name"]),
-                "textures": config["textures"],
-            }
-            if "default_texture" in config:
-                params["default_texture"] = config["default_texture"]
+        for entry in resolved_config:
+            func = None
+            if entry["type"] == "light":
+                func = franka_stack_events.randomize_scene_lighting_domelight
+            elif entry["type"] == "asset_texture":
+                func = franka_stack_events.randomize_visual_texture_material
+            else:
+                logger.warning(f"Unknown randomization type: {entry['type']}")
+                continue
+
+            params = entry.get("params", {}).copy()
+
+            if "intensity_range" in params and isinstance(params["intensity_range"], list):
+                params["intensity_range"] = tuple(params["intensity_range"])
+            if "default_color" in params and isinstance(params["default_color"], list):
+                params["default_color"] = tuple(params["default_color"])
+
+            # Convert asset_cfg dict to SceneEntityCfg object if present
+            if "asset_cfg" in params and isinstance(params["asset_cfg"], dict):
+                params["asset_cfg"] = SceneEntityCfg(**params["asset_cfg"])
+            
+            logger.error(f"params: {params}")
 
             setattr(
                 env_cfg.events,
-                config["name"],
+                entry["name"],
                 EventTerm(
-                    func=franka_stack_events.randomize_visual_texture_material,
+                    func=func,
                     mode="reset",
                     params=params,
                 ),
             )
+
+        # 1. Randomize Light (Global)
+        # env_cfg.events.randomize_light = EventTerm(
+        #     func=franka_stack_events.randomize_scene_lighting_domelight,
+        #     mode="reset",
+        #     params={
+        #         "intensity_range": (1500.0, 10000.0),
+        #         "color_variation": 0.4,
+        #         "textures": self.TEXTURES_SKYBOX,
+        #         "default_intensity": 3000.0,
+        #         "default_color": (0.75, 0.75, 0.75),
+        #         "default_texture": "",
+        #     },
+        # )
+
+        # # 2. Randomize Objects (from config)
+        # for config in self.OBJECT_RANDOMIZATION_CONFIG:
+        #     params = {
+        #         "asset_cfg": SceneEntityCfg(config["asset_name"]),
+        #         "textures": config["textures"],
+        #     }
+        #     if "default_texture" in config:
+        #         params["default_texture"] = config["default_texture"]
+
+        #     setattr(
+        #         env_cfg.events,
+        #         config["name"],
+        #         EventTerm(
+        #             func=franka_stack_events.randomize_visual_texture_material,
+        #             mode="reset",
+        #             params=params,
+        #         ),
+        #     )
 
     def _create_env(self):
         import gymnasium as gym

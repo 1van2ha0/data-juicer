@@ -1,1 +1,1 @@
-{"text": "replay-1", "dataset_file": "/data-juicer/demos/mimicgen/mimic_generated1.hdf5", "video_dir": "./outputs/replay/videos_run1", "camera_view_list": ["table", "wrist"], "video": true, "save_depth": false}
+{"text": "replay-1", "dataset_file": "/mnt/data/isaac_tmp1/dataset/dataset.hdf5", "video_dir": "./outputs/replay/videos_run1", "camera_view_list": ["table", "wrist"], "video": true, "save_depth": false}

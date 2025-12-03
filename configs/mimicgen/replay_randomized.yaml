@@ -20,8 +20,8 @@ process:
   - replay_demos_randomized_mapper:
       # Core task configuration (can be overridden per-sample where applicable)
       # This 'task' parameter is REQUIRED by the operator.
-      task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-v0'
-      task: 'Isaac-Stack-Cube-Franka-IK-Rel-v0'
+      task_name: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-v0'
+      task: 'Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-v0'
       headless: true
       device: 'cuda:auto'
 
@@ -36,3 +36,6 @@ process:
       # Input/Output key mapping (sample schema)
       input_file_key: 'dataset_file'
       video_dir_key: 'video_dir'
+
+      # Visual Randomization Configuration
+      visual_randomization_config: 'configs/mimicgen/visual_randomization.yaml'

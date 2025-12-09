@@ -8,7 +8,7 @@ from ..base_op import OPERATORS, UNFORKABLE, Mapper
 
 
 @OPERATORS.register_module("replay_demos_randomized_mapper")
-@UNFORKABLE.register_module("replay_demos_randomized_mapper")
+# @UNFORKABLE.register_module("replay_demos_randomized_mapper")
 class ReplayDemosRandomizedMapper(Mapper):
     """
     Replay demonstrations with Isaac Lab environments and record videos.

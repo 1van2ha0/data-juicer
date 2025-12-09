@@ -5,6 +5,7 @@ from .annotate_demos_mapper import AnnotateDemosMapper
 from .replay_demos_mapper import ReplayDemosMapper
 from .replay_demos_randomized_mapper import ReplayDemosRandomizedMapper
 from .generate_dataset_mapper import GenerateDatasetMapper
+from .convert_to_lerobot_mapper import ConvertToLeRobotMapper
 from .audio_add_gaussian_noise_mapper import AudioAddGaussianNoiseMapper
 from .audio_ffmpeg_wrapped_mapper import AudioFFmpegWrappedMapper
 from .calibrate_qa_mapper import CalibrateQAMapper
@@ -104,6 +105,7 @@ __all__ = [
     "ReplayDemosMapper",
     "ReplayDemosRandomizedMapper"
     "GenerateDatasetMapper",
+    "ConvertToLeRobotMapper",
     "AudioAddGaussianNoiseMapper",
     "AudioFFmpegWrappedMapper",
     "CalibrateQAMapper",

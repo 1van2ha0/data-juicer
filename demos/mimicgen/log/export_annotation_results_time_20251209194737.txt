@@ -1,0 +1,34 @@
+2025-12-09 19:47:37.636 | INFO     | data_juicer.config.config:init_setup_from_cfg:682 - dataset_path config is set and a valid local path
+2025-12-09 19:47:37.636 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-12-09 19:47:42.117 | DEBUG    | data_juicer.config.config:timing_context:43 - Initializing setup from config took 4.62 seconds
+2025-12-09 19:47:42.156 | DEBUG    | data_juicer.config.config:timing_context:43 - Updating operator process took 0.04 seconds
+2025-12-09 19:47:42.156 | INFO     | data_juicer.config.config:config_backup:998 - Back up the input config file [/data-juicer/configs/mimicgen/annotate.yaml] into the work_dir [/data-juicer/demos/mimicgen]
+2025-12-09 19:47:42.161 | INFO     | data_juicer.config.config:display_config:1019 - Configuration table: 
+2025-12-09 19:47:42.189 | DEBUG    | data_juicer.config.config:timing_context:43 - Total config initialization time took 4.82 seconds
+2025-12-09 19:47:42.190 | INFO     | __main__:timing_context:15 - Loading configuration took 4.82 seconds
+2025-12-09 19:47:42.190 | INFO     | data_juicer.core.executor.ray_executor:__init__:59 - Initializing Ray ...
+2025-12-09 19:47:42.193 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-12-09 19:47:42.194 | INFO     | data_juicer.core.data.dataset_builder:__init__:48 - found dataset_path setting: /data-juicer/demos/mimicgen/annotation_tasks.jsonl
+2025-12-09 19:47:42.194 | INFO     | data_juicer.core.data.load_strategy:get_strategy_class:84 - Getting strategy class for exec: ray, data_type: local, data_source: None
+2025-12-09 19:47:42.194 | INFO     | data_juicer.core.executor.ray_executor:__init__:72 - Preparing exporter...
+2025-12-09 19:47:42.194 | WARNING  | data_juicer.core.ray_exporter:_get_export_format:116 - export_path "/data-juicer/demos/mimicgen/annotation_results" does not have a suffix. We will use "jsonl" as the default export type.
+2025-12-09 19:47:42.194 | INFO     | __main__:timing_context:15 - Initializing executor took 0.00 seconds
+2025-12-09 19:47:42.194 | INFO     | data_juicer.core.executor.ray_executor:run:115 - Loading dataset with Ray...
+2025-12-09 19:47:42.195 | DEBUG    | data_juicer.utils.lazy_loader:_load:406 - Loading ray...
+2025-12-09 19:47:42.573 | INFO     | data_juicer.core.data.load_strategy:load_data:236 - Using resolved path for loading ray dataset: /data-juicer/demos/mimicgen/annotation_tasks.jsonl
+2025-12-09 19:47:42.573 | INFO     | data_juicer.core.data.load_strategy:load_data:280 - Try to load data as json.
+2025-12-09 19:47:50.540 | INFO     | data_juicer.core.executor.ray_executor:run:120 - Preparing process operators...
+2025-12-09 19:47:50.545 | INFO     | data_juicer.ops.mapper.annotate_demos_mapper:__init__:112 - Initialized AnnotateDemosMapper: task=Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Mimic-v0, device=cuda:auto, headless=True, batch_size=1 (one task per actor)
+2025-12-09 19:47:50.546 | INFO     | data_juicer.core.executor.ray_executor:run:129 - Processing data...
+2025-12-09 19:47:50.547 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-12-09 19:47:50.578 | INFO     | data_juicer.utils.ray_utils:get_ray_nodes_info:96 - Ray nodes:
+[{'NodeID': '8efca2ce223e8f337211ed5e9f23c453b63b028d563d4da51f4be338', 'Alive': True, 'NodeManagerAddress': '10.0.2.251', 'NodeManagerHostname': 'dsw-306626-86db8f4c74-5678s', 'NodeManagerPort': 34783, 'ObjectManagerPort': 40369, 'ObjectStoreSocketName': '/tmp/ray/session_2025-12-09_19-47-37_790195_1737336/sockets/plasma_store', 'RayletSocketName': '/tmp/ray/session_2025-12-09_19-47-37_790195_1737336/sockets/raylet', 'MetricsExportPort': 44277, 'NodeName': '10.0.2.251', 'RuntimeEnvAgentPort': 64781, 'DeathReason': 0, 'DeathReasonMessage': '', 'alive': True, 'Resources': {'node:10.0.2.251': 1.0, 'memory': 31904469812.0, 'object_store_memory': 13673344204.0, 'CPU': 8.0, 'GPU': 1.0, 'accelerator_type:L20': 1.0, 'node:__internal_head__': 1.0}, 'Labels': {'ray.io/node_id': '8efca2ce223e8f337211ed5e9f23c453b63b028d563d4da51f4be338'}}]
+2025-12-09 19:47:51.073 | INFO     | data_juicer.utils.ray_utils:get_ray_nodes_info:118 - Ray cluster info:
+{'8efca2ce223e8f337211ed5e9f23c453b63b028d563d4da51f4be338': {'free_memory': 39242, 'cpu_count': 8, 'gpu_count': 1, 'gpus_memory': [49140], 'free_gpus_memory': [48640]}}
+2025-12-09 19:47:51.074 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-12-09 19:47:51.076 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-12-09 19:47:51.083 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-12-09 19:47:51.084 | DEBUG    | data_juicer.utils.availability_utils:_is_package_available:24 - Detected torch version 2.7.0
+2025-12-09 19:47:51.085 | INFO     | data_juicer.utils.process_utils:calculate_ray_np:478 - Op[annotate_demos_mapper] will be executed with the following resources: num_cpus: None, num_gpus: 0.5, concurrency: 2, 
+2025-12-09 19:47:51.100 | INFO     | data_juicer.core.executor.ray_executor:run:135 - Exporting dataset to disk...
+2025-12-09 19:51:17.927 | INFO     | data_juicer.core.executor.ray_executor:__exit__:30 - Removing tmp dir /data-juicer/demos/mimicgen/.tmp/01000000 ...

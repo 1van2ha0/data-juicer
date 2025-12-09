@@ -12,7 +12,7 @@ from ..base_op import OPERATORS, UNFORKABLE, Mapper
 
 
 @OPERATORS.register_module("generate_dataset_mapper")
-@UNFORKABLE.register_module("generate_dataset_mapper")
+# @UNFORKABLE.register_module("generate_dataset_mapper")
 class GenerateDatasetMapper(Mapper):
     """
     Generates a mimic dataset using Isaac Lab.

@@ -1,0 +1,21 @@
+# Configuration to convert HDF5 datasets to LeRobot format
+# Run with: python tools/process_data.py --config configs/mimicgen/convert2lerobot.yaml
+
+dataset_path: './demos/mimicgen/convert_tasks.jsonl'
+export_path: './demos/mimicgen/convert_results/' # Placeholder, actual output is in output_dir
+
+# Number of parallel processes.
+np: 2
+
+executor_type: ray
+ray_address: local
+
+process:
+  - convert_to_lerobot_mapper:
+      # Path to the external configuration file for the dataset
+      # This path should be relative to the workspace root or absolute
+      config_path: '/dataset/galbot/gr00t_task_space_config.yaml'
+      
+      # Keys in the JSONL file
+      input_file_key: 'input_file'
+      output_dir_key: 'output_dir'

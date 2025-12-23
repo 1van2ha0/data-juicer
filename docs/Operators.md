@@ -47,7 +47,7 @@ Data-Juicer 中的算子分为以下 8 种类型。
 | [formatter](#formatter) | 8 | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
 | [grouper](#grouper) | 3 | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
 | [mapper](#mapper) | 100 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
-| [pipeline](#pipeline) | 3 | Combines multiple operators into a data processing pipeline. 将多个算子组合成数据处理流水线。 |
+| [pipeline](#pipeline) | 3 | Applies dataset-level processing; both input and output are datasets. 执行数据集级别的操作，输入和输出均为完整数据集。 |
 | [selector](#selector) | 5 | Selects top samples based on ranking. 基于排序选取高质量样本。 |
 
 All the specific operators are listed below, each featured with several capability tags. 
@@ -178,7 +178,7 @@ All the specific operators are listed below, each featured with several capabili
 
 | Operator 算子 | Tags 标签 | Description 描述 | Details 详情 | Reference 参考 |
 |----------|------|-------------|-------------|-------------|
-| annotate_demos_mapper | 🔤Text 🚀GPU 🔴Alpha | Automatically annotate robot demonstration episodes using Isaac Lab. 使用Isaac Lab自动注释机器人演示片段。 | - | - |
+| annotate_demos_mapper | 🔤Text 🚀GPU 🟡Beta | Automatically annotate robot demonstration episodes using Isaac Lab. 使用Isaac Lab自动注释机器人演示片段。 | - | - |
 | audio_add_gaussian_noise_mapper | 📣Audio 💻CPU 🟡Beta | Mapper to add Gaussian noise to audio samples. 映射器将高斯噪声添加到音频样本。 | [info](operators/mapper/audio_add_gaussian_noise_mapper.md) | - |
 | audio_ffmpeg_wrapped_mapper | 📣Audio 💻CPU 🟢Stable | Wraps FFmpeg audio filters for processing audio files in a dataset. 包装FFmpeg音频过滤器，用于处理数据集中的音频文件。 | [info](operators/mapper/audio_ffmpeg_wrapped_mapper.md) | - |
 | calibrate_qa_mapper | 🔤Text 💻CPU 🔗API 🟢Stable | Calibrates question-answer pairs based on reference text using an API model. 使用API模型根据参考文本校准问答对。 | [info](operators/mapper/calibrate_qa_mapper.md) | - |
@@ -190,7 +190,7 @@ All the specific operators are listed below, each featured with several capabili
 | clean_html_mapper | 🔤Text 💻CPU 🟢Stable | Cleans HTML code from text samples, converting HTML to plain text. 从文本示例中清除HTML代码，将HTML转换为纯文本。 | [info](operators/mapper/clean_html_mapper.md) | - |
 | clean_ip_mapper | 🔤Text 💻CPU 🟢Stable | Cleans IPv4 and IPv6 addresses from text samples. 从文本示例中清除IPv4和IPv6地址。 | [info](operators/mapper/clean_ip_mapper.md) | - |
 | clean_links_mapper | 🔤Text 💻CPU 🟢Stable | Mapper to clean links like http/https/ftp in text samples. 映射器来清理链接，如文本示例中的http/https/ftp。 | [info](operators/mapper/clean_links_mapper.md) | - |
-| convert_to_lerobot_mapper | 💻CPU 🔴Alpha | Convert HDF5 datasets (MimicGen/Isaac Lab format) to LeRobot dataset format. 将HDF5数据集 (MimicGen/Isaac Lab格式) 转换为LeRobot数据集格式。 | - | - |
+| convert_to_lerobot_mapper | 💻CPU 🟡Beta | Convert HDF5 datasets (MimicGen/Isaac Lab format) to LeRobot dataset format. 将HDF5数据集 (MimicGen/Isaac Lab格式) 转换为LeRobot数据集格式。 | - | - |
 | detect_character_attributes_mapper | 🚀GPU 🟡Beta | Takes an image, a caption, and main character names as input to extract the characters' attributes. 根据给定的图像、图像描述信息和（多个）角色名称，提取图像中主要角色的属性。 | [info](operators/mapper/detect_character_attributes_mapper.md) | [DetailMaster](https://arxiv.org/abs/2505.16915) |
 | detect_character_locations_mapper | 🚀GPU 🟡Beta | Given an image and a list of main character names, extract the bounding boxes for each present character. 给定一张图像和主要角色的名称列表，提取每个在场角色的边界框。(YOLOE + MLLM) | [info](operators/mapper/detect_character_locations_mapper.md) | [DetailMaster](https://arxiv.org/abs/2505.16915) |
 | detect_main_character_mapper | 🚀GPU 🟡Beta | Extract all main character names based on the given image and its caption. 根据给定的图像及其图像描述，提取所有主要角色的名字。 | [info](operators/mapper/detect_main_character_mapper.md) | [DetailMaster](https://arxiv.org/abs/2505.16915) |
@@ -208,7 +208,7 @@ All the specific operators are listed below, each featured with several capabili
 | extract_support_text_mapper | 🔤Text 💻CPU 🔗API 🟢Stable | Extracts a supporting sub-text from the original text based on a given summary. 根据给定的摘要从原始文本中提取支持子文本。 | [info](operators/mapper/extract_support_text_mapper.md) | - |
 | extract_tables_from_html_mapper | 🔤Text 💻CPU 🟡Beta | Extracts tables from HTML content and stores them in a specified field. 从HTML内容中提取表并将其存储在指定字段中。 | [info](operators/mapper/extract_tables_from_html_mapper.md) | - |
 | fix_unicode_mapper | 🔤Text 💻CPU 🟢Stable | Fixes unicode errors in text samples. 修复文本示例中的unicode错误。 | [info](operators/mapper/fix_unicode_mapper.md) | - |
-| generate_dataset_mapper | 🔤Text 🚀GPU 🔴Alpha | Generates a mimic dataset using Isaac Lab. 使用Isaac Lab生成模拟数据集。 | - | - |
+| generate_dataset_mapper | 🔤Text 🚀GPU 🟡Beta | Generates a mimic dataset using Isaac Lab. 使用Isaac Lab生成模拟数据集。 | - | - |
 | generate_qa_from_examples_mapper | 🚀GPU 🌊vLLM 🧩HF 🟢Stable | Generates question and answer pairs from examples using a Hugging Face model. 使用拥抱面部模型从示例生成问题和答案对。 | [info](operators/mapper/generate_qa_from_examples_mapper.md) | - |
 | generate_qa_from_text_mapper | 🔤Text 🚀GPU 🌊vLLM 🧩HF 🟢Stable | Generates question and answer pairs from text using a specified model. 使用指定的模型从文本生成问题和答案对。 | [info](operators/mapper/generate_qa_from_text_mapper.md) | - |
 | image_blur_mapper | 🏞Image 💻CPU 🟢Stable | Blurs images in the dataset with a specified probability and blur type. 使用指定的概率和模糊类型对数据集中的图像进行模糊处理。 | [info](operators/mapper/image_blur_mapper.md) | - |
@@ -250,7 +250,7 @@ All the specific operators are listed below, each featured with several capabili
 | remove_table_text_mapper | 🔤Text 💻CPU 🟢Stable | Mapper to remove table texts from text samples. 映射器从文本样本中删除表文本。 | [info](operators/mapper/remove_table_text_mapper.md) | - |
 | remove_words_with_incorrect_substrings_mapper | 🔤Text 💻CPU 🟢Stable | Mapper to remove words containing specified incorrect substrings. 映射程序删除包含指定的不正确子字符串的单词。 | [info](operators/mapper/remove_words_with_incorrect_substrings_mapper.md) | - |
 | replace_content_mapper | 🔤Text 💻CPU 🟢Stable | Replaces content in the text that matches a specific regular expression pattern with a designated replacement string. 用指定的替换字符串替换与特定正则表达式模式匹配的文本中的内容。 | [info](operators/mapper/replace_content_mapper.md) | - |
-| replay_demos_randomized_mapper | 🚀GPU 🔴Alpha | Replay demonstrations with Isaac Lab environments and record videos. 使用Isaac实验室环境重播演示并录制视频。 | - | - |
+| replay_demos_randomized_mapper | 🚀GPU 🟡Beta | Replay demonstrations with Isaac Lab environments and record videos. 使用Isaac实验室环境重播演示并录制视频。 | - | - |
 | sdxl_prompt2prompt_mapper | 🔤Text 🚀GPU 🟢Stable | Generates pairs of similar images using the SDXL model. 使用SDXL模型生成成对的相似图像。 | [info](operators/mapper/sdxl_prompt2prompt_mapper.md) | - |
 | sentence_augmentation_mapper | 🔤Text 🚀GPU 🧩HF 🟢Stable | Augments sentences by generating enhanced versions using a Hugging Face model. 通过使用拥抱面部模型生成增强版本来增强句子。 | [info](operators/mapper/sentence_augmentation_mapper.md) | - |
 | sentence_split_mapper | 🔤Text 💻CPU 🟢Stable | Splits text samples into individual sentences based on the specified language. 根据指定的语言将文本样本拆分为单个句子。 | [info](operators/mapper/sentence_split_mapper.md) | - |

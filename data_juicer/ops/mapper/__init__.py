@@ -1,3 +1,4 @@
+from .annotate_demos_mapper import AnnotateDemosMapper
 from .annotation.human_preference_annotation_mapper import (
     HumanPreferenceAnnotationMapper,
 )
@@ -12,6 +13,7 @@ from .clean_email_mapper import CleanEmailMapper
 from .clean_html_mapper import CleanHtmlMapper
 from .clean_ip_mapper import CleanIpMapper
 from .clean_links_mapper import CleanLinksMapper
+from .convert_to_lerobot_mapper import ConvertToLeRobotMapper
 from .detect_character_attributes_mapper import DetectCharacterAttributesMapper
 from .detect_character_locations_mapper import DetectCharacterLocationsMapper
 from .detect_main_character_mapper import DetectMainCharacterMapper
@@ -29,6 +31,7 @@ from .extract_nickname_mapper import ExtractNicknameMapper
 from .extract_support_text_mapper import ExtractSupportTextMapper
 from .extract_tables_from_html_mapper import ExtractTablesFromHtmlMapper
 from .fix_unicode_mapper import FixUnicodeMapper
+from .generate_dataset_mapper import GenerateDatasetMapper
 from .generate_qa_from_examples_mapper import GenerateQAFromExamplesMapper
 from .generate_qa_from_text_mapper import GenerateQAFromTextMapper
 from .image_blur_mapper import ImageBlurMapper
@@ -74,6 +77,7 @@ from .remove_words_with_incorrect_substrings_mapper import (
     RemoveWordsWithIncorrectSubstringsMapper,
 )
 from .replace_content_mapper import ReplaceContentMapper
+from .replay_demos_randomized_mapper import ReplayDemosRandomizedMapper
 from .sdxl_prompt2prompt_mapper import SDXLPrompt2PromptMapper
 from .sentence_augmentation_mapper import SentenceAugmentationMapper
 from .sentence_split_mapper import SentenceSplitMapper
@@ -103,6 +107,10 @@ from .video_whole_body_pose_estimation_mapper import VideoWholeBodyPoseEstimatio
 from .whitespace_normalization_mapper import WhitespaceNormalizationMapper
 
 __all__ = [
+    "AnnotateDemosMapper",
+    "ReplayDemosRandomizedMapper",
+    "GenerateDatasetMapper",
+    "ConvertToLeRobotMapper",
     "AudioAddGaussianNoiseMapper",
     "AudioFFmpegWrappedMapper",
     "CalibrateQAMapper",

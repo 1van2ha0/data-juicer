@@ -150,6 +150,12 @@ ai_services = [
     "label-studio==1.17.0",  # Data labeling
 ]
 
+# Simulator
+simulator = [
+    "isaacsim[all,extscache]==5.1.0",
+    "ray[all]==2.46.0",
+    "usd-core",
+]
 
 # All dependencies (default + all optional)
 all = [
@@ -160,6 +166,7 @@ all = [
     "py-data-juicer[distributed]",
     "py-data-juicer[dev]",
     "py-data-juicer[ai_services]",
+    "py-data-juicer[simulator]",
 ]
 
 [project.scripts]

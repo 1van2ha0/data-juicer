@@ -243,7 +243,7 @@ class ConvertToLeRobotMapper(Mapper):
                 slices.append(slice(*dim))
             else:
                 raise ValueError(f"Invalid slice dimension format: {dim}")
-        
+
         if len(slices) == 1:
             return slices[0]
         return tuple(slices)
@@ -251,7 +251,7 @@ class ConvertToLeRobotMapper(Mapper):
     def _apply_transform(self, array: np.ndarray, transform_config: dict) -> np.ndarray:
         if "slice" in transform_config:
             slice_conf = transform_config["slice"]
-            try: 
+            try:
                 slice_obj = self._parse_structured_slice(slice_conf)
                 array = array[slice_obj]
             except Exception as e:

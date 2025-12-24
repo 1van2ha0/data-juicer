@@ -232,7 +232,6 @@ class ReplayDemosRandomizedMapper(Mapper):
                 ),
             )
 
-
     def _create_env(self):
         import gymnasium as gym
         from isaaclab_tasks.utils.parse_cfg import parse_env_cfg

@@ -1,0 +1,2 @@
+{"text": "gen-task-1", "input_file": "./outputs/demo/mimicgen/annotate/dataset_annotated.hdf5", "output_file": "./outputs/demo/mimicgen/generate/mimic_generated1.hdf5"}
+{"text": "gen-task-2", "input_file": "./outputs/demo/mimicgen/annotate/dataset_annotated2.hdf5", "output_file": "./outputs/demo/mimicgen/generate/mimic_generated2.hdf5"}

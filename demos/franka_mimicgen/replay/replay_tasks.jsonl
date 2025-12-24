@@ -1,0 +1,3 @@
+{"text": "replay-1", "dataset_file": "./outputs/demo/mimicgen/generate/mimic_generated1.hdf5", "video_dir": "./outputs/demo/mimicgen/replay/videos_run1", "camera_view_list": ["table", "wrist"], "video": true, "save_depth": true}
+{"text": "replay-2", "dataset_file": "./outputs/demo/mimicgen/generate/mimic_generated2.hdf5", "video_dir": "./outputs/demo/mimicgen/replay/videos_run2", "camera_view_list": ["table", "wrist"], "video": true, "save_depth": true}
+

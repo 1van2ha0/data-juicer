@@ -1,6 +1,11 @@
 import os
+import re
+import time
 from typing import Any, Dict, List, Optional
 
+import cv2
+import torch
+from isaaclab.utils.datasets import HDF5DatasetFileHandler
 from loguru import logger
 
 from ..base_op import OPERATORS, UNFORKABLE, Mapper
@@ -157,11 +162,6 @@ class ReplayDemosRandomizedMapper(Mapper):
         # Ensure env packages registered
         import isaaclab_tasks  # noqa: F401
 
-        # import isaaclab_tasks.manager_based.manipulation.stack.mdp.franka_stack_events as franka_stack_events
-        # from isaaclab.managers import EventTermCfg as EventTerm
-        # from isaaclab.managers import SceneEntityCfg
-        # from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, NVIDIA_NUCLEUS_DIR
-
         if self.enable_pinocchio:
             import isaaclab_tasks.manager_based.locomanipulation.pick_place  # noqa: F401
             import isaaclab_tasks.manager_based.manipulation.pick_place  # noqa: F401
@@ -220,7 +220,7 @@ class ReplayDemosRandomizedMapper(Mapper):
             if "asset_cfg" in params and isinstance(params["asset_cfg"], dict):
                 params["asset_cfg"] = SceneEntityCfg(**params["asset_cfg"])
 
-            logger.error(f"params: {params}")
+            logger.debug(f"params: {params}")
 
             setattr(
                 env_cfg.events,
@@ -232,38 +232,6 @@ class ReplayDemosRandomizedMapper(Mapper):
                 ),
             )
 
-        # 1. Randomize Light (Global)
-        # env_cfg.events.randomize_light = EventTerm(
-        #     func=franka_stack_events.randomize_scene_lighting_domelight,
-        #     mode="reset",
-        #     params={
-        #         "intensity_range": (1500.0, 10000.0),
-        #         "color_variation": 0.4,
-        #         "textures": self.TEXTURES_SKYBOX,
-        #         "default_intensity": 3000.0,
-        #         "default_color": (0.75, 0.75, 0.75),
-        #         "default_texture": "",
-        #     },
-        # )
-
-        # # 2. Randomize Objects (from config)
-        # for config in self.OBJECT_RANDOMIZATION_CONFIG:
-        #     params = {
-        #         "asset_cfg": SceneEntityCfg(config["asset_name"]),
-        #         "textures": config["textures"],
-        #     }
-        #     if "default_texture" in config:
-        #         params["default_texture"] = config["default_texture"]
-
-        #     setattr(
-        #         env_cfg.events,
-        #         config["name"],
-        #         EventTerm(
-        #             func=franka_stack_events.randomize_visual_texture_material,
-        #             mode="reset",
-        #             params=params,
-        #         ),
-        #     )
 
     def _create_env(self):
         import gymnasium as gym
@@ -332,15 +300,13 @@ class ReplayDemosRandomizedMapper(Mapper):
         """Process a single replay task (batch_size=1)."""
         # Normalize device if auto and CUDA available
         try:
-            import torch as _torch
-
             if isinstance(self.device, str) and self.device.startswith("cuda"):
-                if self.device in ("cuda", "cuda:auto") and _torch.cuda.is_available():
-                    count = _torch.cuda.device_count()
+                if self.device in ("cuda", "cuda:auto") and torch.cuda.is_available():
+                    count = torch.cuda.device_count()
                     if count > 0:
                         idx = 0 if rank is None else rank % count
                         self.device = f"cuda:{idx}"
-                elif not _torch.cuda.is_available():
+                elif not torch.cuda.is_available():
                     logger.warning("CUDA requested but unavailable; falling back to CPU")
                     self.device = "cpu"
         except Exception:
@@ -369,8 +335,6 @@ class ReplayDemosRandomizedMapper(Mapper):
             base_video_dir = os.path.join(os.getcwd(), f"{self.task_name}_videos")
         os.makedirs(base_video_dir, exist_ok=True)
         # Always allocate a unique sub-directory per task to avoid collisions across parallel tasks
-        import time
-
         task_video_dir = os.path.join(base_video_dir, f"task_{os.getpid()}_{int(time.time()*1000)}")
         os.makedirs(task_video_dir, exist_ok=True)
 
@@ -396,8 +360,6 @@ class ReplayDemosRandomizedMapper(Mapper):
             success_term = self._create_env()
 
             # 3) Open dataset
-            from isaaclab.utils.datasets import HDF5DatasetFileHandler
-
             dataset_handler = HDF5DatasetFileHandler()
             if not os.path.exists(dataset_file):
                 raise FileNotFoundError(f"Dataset file not found: {dataset_file}")
@@ -406,8 +368,6 @@ class ReplayDemosRandomizedMapper(Mapper):
 
             # If select_episodes provided, map from names by extracting indices
             if self.select_episodes:
-                import re
-
                 name_by_index: Dict[int, str] = {}
                 for name in episode_names:
                     m = re.search(r"(\d+)", name)
@@ -423,7 +383,6 @@ class ReplayDemosRandomizedMapper(Mapper):
                 raise RuntimeError("No episodes found in dataset")
 
             env = self._env
-            import torch
 
             # Default camera view if none provided
             if hasattr(env, "sim"):
@@ -486,7 +445,6 @@ class ReplayDemosRandomizedMapper(Mapper):
                         for view in camera_views:
                             try:
                                 rgb_cam = env.scene.sensors[f"{view}_cam"].data.output["rgb"].cpu().numpy()[0]
-                                import cv2
 
                                 rgb_path = os.path.join(
                                     demo_save_dir,
@@ -515,7 +473,6 @@ class ReplayDemosRandomizedMapper(Mapper):
                 # Check success if term provided
                 episode_success = True
                 try:
-                    success_term = success_term  # noqa
                     if success_term is not None:
                         result = success_term.func(env, **success_term.params)[0]
                         episode_success = bool(result)

@@ -221,14 +221,41 @@ class ConvertToLeRobotMapper(Mapper):
 
         return info_template
 
+    def _parse_structured_slice(self, slice_config):
+        """
+        Parses a structured slice configuration from YAML (list of dims) into a slice object or tuple.
+        Example YAML: [[null, -1], 0] -> Python: (slice(None, -1), 0)
+        """
+        if not isinstance(slice_config, list):
+            raise ValueError(f"Slice config must be a list of dimensions, got {type(slice_config)}")
+
+        slices = []
+        for dim in slice_config:
+            if isinstance(dim, int):
+                # Integer index
+                slices.append(dim)
+            elif isinstance(dim, str) and dim == "...":
+                # Ellipsis
+                slices.append(Ellipsis)
+            elif isinstance(dim, list):
+                # Slice definition [start, stop, step]
+                # YAML null becomes Python None
+                slices.append(slice(*dim))
+            else:
+                raise ValueError(f"Invalid slice dimension format: {dim}")
+        
+        if len(slices) == 1:
+            return slices[0]
+        return tuple(slices)
+
     def _apply_transform(self, array: np.ndarray, transform_config: dict) -> np.ndarray:
         if "slice" in transform_config:
-            slice_str = transform_config["slice"]
-            try:
-                slice_obj = eval(f"np.s_{slice_str}")
+            slice_conf = transform_config["slice"]
+            try: 
+                slice_obj = self._parse_structured_slice(slice_conf)
                 array = array[slice_obj]
             except Exception as e:
-                logger.error(f"Error applying slice {slice_str}: {e}")
+                logger.error(f"Error applying slice {slice_conf}: {e}")
                 raise
 
         if "reshape" in transform_config:
@@ -491,9 +518,6 @@ class ConvertToLeRobotMapper(Mapper):
             try:
                 self._convert_file(input_file, output_dir, video_dir=video_dir, config_path=config_path)
             except Exception as e:
-                logger.error(f"Failed to convert {input_file}: {e}")
-                import traceback
-
-                traceback.print_exc()
+                logger.exception(f"Failed to convert {input_file}: {e}")
 
         return samples

@@ -344,8 +344,7 @@ class GenerateDatasetMapper(Mapper):
 
         logger.info("Task: Generate from %s -> %s", input_file, output_file)
 
-        # try:
-        for i in range(1):
+        try:
             result = self._generate_dataset_for_file(input_file, output_file)
             results[0] = result
 
@@ -354,12 +353,12 @@ class GenerateDatasetMapper(Mapper):
             else:
                 logger.warning("✗ Task failed")
 
-        # except Exception as exc:
-        #     logger.error("An exception occurred during dataset generation: %s", exc, exc_info=True)
-        #     results[0] = {"success": False, "error": str(exc)}
-        # finally:
-        #     logger.info("Task complete. Cleaning up resources...")
-        #     self.cleanup()
+        except Exception as exc:
+            logger.error("An exception occurred during dataset generation: %s", exc, exc_info=True)
+            results[0] = {"success": False, "error": str(exc)}
+        finally:
+            logger.info("Task complete. Cleaning up resources...")
+            self.cleanup()
 
         samples["generation_result"] = results
         return samples

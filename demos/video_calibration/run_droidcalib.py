@@ -8,12 +8,11 @@ def main():
     ray.init(address='auto', ignore_reinit_error=True)
 
     # 2. Setup paths
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, 'data', 'demo.jsonl')
-    output_dir = os.path.join(current_dir, 'output')
+    data_path = "./demos/video_calibration/data/demo.jsonl"
+    output_dir = "./output/video_calibration"
     
     if not os.path.exists(data_path):
-        raise FileNotFoundError(f"Data file not found at {data_path}. Please run 'python demos/video_calibration_on_ray/data/prepare_data.py' first.")
+        raise FileNotFoundError(f"Data file not found at {data_path}.")
 
     # 3. Load Dataset
     ds = RayDataset(ray.data.read_json(data_path))

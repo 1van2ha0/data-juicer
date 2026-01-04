@@ -118,6 +118,7 @@ class VideoCalibrationMapper(Mapper):
         self.droid_args.disable_vis = disable_vis
         self.droid_args.stereo = False
         self.droid_args.camera_model = "pinhole" # Default to pinhole
+        self.droid_args.opt_intr = True
 
     def _ensure_droidcalib_ready(self) -> bool:
         """Ensure DroidCalib is importable in the *current process*.
@@ -269,7 +270,8 @@ class VideoCalibrationMapper(Mapper):
         sf = None # size factor
         intr_est_list = None
         
-        try:
+        # try:
+        for i in range(1):
             for (t, image, intrinsics, size_factor) in stream:
                 if droid is None:
                     # Update args with actual image size
@@ -296,10 +298,10 @@ class VideoCalibrationMapper(Mapper):
                 
                 intr_est_list = intr_est.tolist()
                 
-        except Exception as e:
-            # Log error or just skip
-            print(f"Error processing video {video_path}: {e}")
-        finally:
+        # except Exception as e:
+        #     # Log error or just skip
+        #     print(f"Error processing video {video_path}: {e}")
+        # finally:
             # Cleanup
             if droid:
                 del droid

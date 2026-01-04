@@ -1,2 +1,2 @@
-{"text": "Annotate dataset 1", "input_file": "./demos/franka_mimicgen/dataset.hdf5", "output_file": "./outputs/demo/mimicgen/annotate/dataset_annotated.hdf5"}
-{"text": "Annotate dataset 2", "input_file": "./demos/franka_mimicgen/dataset.hdf5", "output_file": "./outputs/demo/mimicgen/annotate/dataset_annotated2.hdf5"}
+{"text": "Annotate dataset 1", "input_file": "./demos/franka_mimicgen/data/dataset.hdf5", "output_file": "./outputs/demo/mimicgen/annotate/dataset_annotated.hdf5"}
+{"text": "Annotate dataset 2", "input_file": "./demos/franka_mimicgen/data/dataset.hdf5", "output_file": "./outputs/demo/mimicgen/annotate/dataset_annotated2.hdf5"}

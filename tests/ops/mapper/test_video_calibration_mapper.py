@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from unittest.mock import MagicMock, patch
 from data_juicer.ops.mapper.video_calibration_mapper import VideoCalibrationMapper
+from data_juicer.utils.constant import Fields
 
 class TestVideoCalibrationMapper(unittest.TestCase):
     
@@ -45,8 +46,7 @@ class TestVideoCalibrationMapper(unittest.TestCase):
             # We also need to mock os.path.exists to return True for DroidCalib path check in __init__
             # and mock subprocess.run to avoid actual git clone
             with patch('os.path.exists') as mock_exists, \
-                 patch('subprocess.run') as mock_run, \
-                 patch('sys.path.append') as mock_append:
+                 patch('subprocess.run') as mock_run:
                 
                 # Make sure video path exists
                 def side_effect(path):
@@ -64,9 +64,10 @@ class TestVideoCalibrationMapper(unittest.TestCase):
                 res = op.process_single(sample)
                 
                 # Check
-                self.assertIn('meta', res)
-                self.assertIn('camera_intrinsics', res['meta'])
-                self.assertEqual(len(res['meta']['camera_intrinsics']), 4)
+                self.assertIn(Fields.meta, res)
+                self.assertIn('camera_intrinsics', res[Fields.meta])
+                self.assertEqual(len(res[Fields.meta]['camera_intrinsics']), 1)
+                self.assertEqual(len(res[Fields.meta]['camera_intrinsics'][0]), 4)
                 
                 # Verify Droid was called
                 self.assertTrue(mock_droid_class.called)

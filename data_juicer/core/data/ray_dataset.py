@@ -179,7 +179,10 @@ class RayDataset(DJDataset):
             batch_size = getattr(op, "batch_size", 1) if op.is_batched_op() else 1
             if isinstance(op, Mapper):
                 if op.use_ray_actor():
-                    op_kwargs = op._op_cfg[op._name]
+                    if hasattr(op, "_op_cfg"):
+                        op_kwargs = op._op_cfg[op._name]
+                    else:
+                        op_kwargs = op.__dict__
                     compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.__class__,

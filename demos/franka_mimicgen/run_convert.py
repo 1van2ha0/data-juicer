@@ -9,7 +9,8 @@ from data_juicer.ops.mapper import ConvertToLeRobotMapper
 
 ray.init(address='local')
 
-ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/convert/convert_tasks.jsonl'))
+# Updated path to the new data directory
+ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/data/convert_tasks.jsonl'))
 
 converter = ConvertToLeRobotMapper(
     config_path_key='config_path',

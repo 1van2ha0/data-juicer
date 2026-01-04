@@ -111,82 +111,6 @@ class AnnotateDemosMapper(Mapper):
             f"device={device}, headless={headless}, batch_size=1 (one task per actor)"
         )
 
-    def _ensure_sim_app(self):
-        """Ensure Isaac Sim SimulationApp is initialized once and reused."""
-        if self._isaac_initialized:
-            return
-
-        import os
-
-        import torch
-
-        # Clean up any existing CUDA state
-        if torch.cuda.is_initialized():
-            logger.warning("CUDA was initialized before Isaac Sim. Cleaning up...")
-            torch.cuda.empty_cache()
-        # Ensure CUDA is available
-        if not torch.cuda.is_available():
-            raise RuntimeError(
-                "CUDA is not available. Isaac Sim requires CUDA to run. "
-                "Please check your GPU drivers and CUDA installation."
-            )
-        # Set environment variables for CUDA
-        os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-
-        logger.info(f"Initializing Isaac Sim (SimulationApp) for task: {self.task_name}")
-        logger.info(f"CUDA device count: {torch.cuda.device_count()}")
-        logger.info(f"Using device: {self.device}")
-
-        # Temporarily swap std streams to real OS streams during SimulationApp launch
-        import sys
-
-        for stream_name in ("stdin", "stdout", "stderr"):
-            self._orig_streams[stream_name] = getattr(sys, stream_name, None)
-            real_stream = getattr(sys, f"__{stream_name}__", None)
-            if real_stream is not None:
-                setattr(sys, stream_name, real_stream)
-
-        # Build and launch SimulationApp
-        import argparse
-
-        from isaaclab.app import AppLauncher
-
-        parser = argparse.ArgumentParser()
-        AppLauncher.add_app_launcher_args(parser)
-        args, _ = parser.parse_known_args([])
-        args.headless = self.headless
-        args.device = self.device
-        args.enable_cameras = self.enable_cameras
-        args.enable_scene_lights = not self.headless
-
-        if self.enable_pinocchio:
-            import pinocchio  # noqa: F401
-        import faulthandler
-
-        try:
-            self._faulthandler_file = open(os.devnull, "w")
-            faulthandler.enable(file=self._faulthandler_file)
-        except Exception as e:
-            logger.debug("Failed to enable faulthandler: {}", e)
-            self._faulthandler_file = None
-
-        app_launcher = AppLauncher(args)
-        self._simulation_app = app_launcher.app
-
-        # Restore original wrapped streams
-        for stream_name, orig in self._orig_streams.items():
-            if orig is not None:
-                setattr(sys, stream_name, orig)
-
-        # Import env packages after SimulationApp
-        import isaaclab_mimic.envs  # noqa: F401
-
-        if self.enable_pinocchio:
-            import isaaclab_mimic.envs.pinocchio_envs  # noqa: F401
-
-        self._isaac_initialized = True
-        logger.info("Isaac Sim SimulationApp initialized successfully")
-
     def _create_task_env(self):
         """Create a fresh Isaac Lab env for a single task.
 
@@ -280,7 +204,9 @@ class AnnotateDemosMapper(Mapper):
         :return: Annotation result
         """
         # Ensure SimulationApp is running (only once), but recreate Isaac Lab env per task
-        self._ensure_sim_app()
+        from data_juicer.utils.isaac_utils import ensure_isaac_sim_app
+
+        ensure_isaac_sim_app(self, mode="mimic")
 
         import torch
         from isaaclab.utils.datasets import HDF5DatasetFileHandler
@@ -482,25 +408,12 @@ class AnnotateDemosMapper(Mapper):
 
         return samples
 
-    def cleanup(self):
-        """Cleanup Isaac Sim resources (called by Ray Actor on shutdown).
-
-        Only closes the Isaac Lab environment, not the simulation app.
-        Ray will manage the Actor process lifecycle.
-        """
-        logger.info("Cleaning up AnnotateDemosMapper resources...")
-
-        # Close Isaac Lab environment
-        if self._env is not None:
-            self._env.close()
-            logger.info("Closed Isaac Lab environment")
-            self._env = None
-
-        # Do NOT close simulation_app - it calls exit() which conflicts with Ray
-        # Ray will terminate the Actor process naturally
-        logger.info("Cleanup complete (simulation_app left running for Ray to manage)")
-        return {"status": "cleaned"}
+    # Use shared cleanup logic
+    from data_juicer.utils.isaac_utils import cleanup_isaac_env as cleanup
 
     def __del__(self):
         """Cleanup Isaac Sim environment on deletion."""
-        self.cleanup()
+        try:
+            self.cleanup()
+        except Exception:
+            pass

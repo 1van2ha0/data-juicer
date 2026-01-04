@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 import cv2
 import torch
@@ -110,84 +110,13 @@ class ReplayDemosRandomizedMapper(Mapper):
 
         logger.info(f"Initialized ReplayDemosRandomizedMapper for task={self.task_name}")
 
-    def _ensure_sim_app(self):
-        """Initialize Isaac Sim's SimulationApp once and reuse within the actor."""
-        if self._isaac_initialized:
-            return
-
-        import argparse
-        import sys
-
-        import torch
-
-        # If CUDA already initialized by torch, try to clear cache before launching App
-        if torch.cuda.is_initialized():
-            logger.warning("CUDA was initialized before Isaac Sim. Clearing cached state...")
-            torch.cuda.empty_cache()
-
-        os.environ.setdefault("CUDA_LAUNCH_BLOCKING", "1")
-
-        # Swap wrapped IO streams while launching SimulationApp (avoid wrapper issues)
-        _orig_streams: Dict[str, Optional[Any]] = {}
-        for stream_name in ("stdin", "stdout", "stderr"):
-            _orig_streams[stream_name] = getattr(sys, stream_name, None)
-            real_stream = getattr(sys, f"__{stream_name}__", None)
-            if real_stream is not None:
-                setattr(sys, stream_name, real_stream)
-
-        from isaaclab.app import AppLauncher
-
-        parser = argparse.ArgumentParser()
-        AppLauncher.add_app_launcher_args(parser)
-        args, _ = parser.parse_known_args([])
-        args.headless = self.headless
-        args.device = self.device
-        # enable cameras if video requested
-        args.enable_cameras = bool(self.video)
-        args.enable_scene_lights = not self.headless
-
-        if self.enable_pinocchio:
-            import pinocchio  # noqa: F401
-
-        app_launcher = AppLauncher(args)
-        self._simulation_app = app_launcher.app
-
-        # Restore streams
-        import sys as _sys
-
-        for stream_name, orig_stream in _orig_streams.items():
-            if orig_stream is not None:
-                setattr(_sys, stream_name, orig_stream)
-
-        # Ensure env packages registered
-        import isaaclab_tasks  # noqa: F401
-
-        if self.enable_pinocchio:
-            import isaaclab_tasks.manager_based.locomanipulation.pick_place  # noqa: F401
-            import isaaclab_tasks.manager_based.manipulation.pick_place  # noqa: F401
-
-        self._isaac_initialized = True
-        logger.info("Isaac Sim SimulationApp initialized for replay")
-
-    def _resolve_config_paths(self, config):
-        from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR, NVIDIA_NUCLEUS_DIR
-
-        def _replace_recursive(item):
-            if isinstance(item, str):
-                return item.format(NVIDIA_NUCLEUS_DIR=NVIDIA_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR=ISAAC_NUCLEUS_DIR)
-            elif isinstance(item, list):
-                return [_replace_recursive(i) for i in item]
-            elif isinstance(item, dict):
-                return {k: _replace_recursive(v) for k, v in item.items()}
-            return item
-
-        return _replace_recursive(config)
-
     def _inject_visual_randomization(self, env_cfg):
         """Inject visual randomization terms into the environment configuration."""
         import isaaclab_tasks.manager_based.manipulation.stack.mdp.franka_stack_events as franka_stack_events
         from isaaclab.managers import EventTermCfg as EventTerm
         from isaaclab.managers import SceneEntityCfg
+
+        from data_juicer.utils.isaac_utils import resolve_nucleus_paths
 
         if not self.visual_randomization_config:
             return
@@ -197,7 +126,7 @@ class ReplayDemosRandomizedMapper(Mapper):
             env_cfg.scene.replicate_physics = False
 
         # Resolve paths in config
-        resolved_config = self._resolve_config_paths(self.visual_randomization_config)
+        resolved_config = resolve_nucleus_paths(self.visual_randomization_config)
 
         for entry in resolved_config:
             func = None
@@ -267,36 +196,10 @@ class ReplayDemosRandomizedMapper(Mapper):
         self._env = env
         return success_term
 
-    def _create_video_from_images(self, input_pattern: str, output_video: str, framerate: float = 20.0):
-        import subprocess
-
-        cmd = [
-            "ffmpeg",
-            "-y",
-            "-framerate",
-            str(framerate),
-            "-i",
-            input_pattern,
-            "-c:v",
-            "libx264",
-            "-pix_fmt",
-            "yuv420p",
-            "-crf",
-            "23",
-            "-preset",
-            "medium",
-            output_video,
-        ]
-        try:
-            subprocess.run(cmd, check=True, capture_output=True)
-            logger.info(f"Created video: {output_video}")
-            return True
-        except Exception as e:
-            logger.warning(f"ffmpeg failed to create video {output_video}: {e}")
-            return False
-
     def process_batched(self, samples, rank: Optional[int] = None):
         """Process a single replay task (batch_size=1)."""
+        from data_juicer.utils.isaac_utils import create_video_from_images
+
         # Normalize device if auto and CUDA available
         try:
             if isinstance(self.device, str) and self.device.startswith("cuda"):
@@ -353,7 +256,9 @@ class ReplayDemosRandomizedMapper(Mapper):
 
         try:
             # 1) Ensure SimulationApp
-            self._ensure_sim_app()
+            from data_juicer.utils.isaac_utils import ensure_isaac_sim_app
+
+            ensure_isaac_sim_app(self, mode="tasks")
 
             # 2) Create env
             success_term = self._create_env()
@@ -486,7 +391,7 @@ class ReplayDemosRandomizedMapper(Mapper):
                             task_video_dir, "images", f"demo_{replayed_episode_count}", f"frame_%04d_{view}_rgb.png"
                         )
                         output_video = os.path.join(task_video_dir, f"demo_{replayed_episode_count}_{view}_rgb.mp4")
-                        ok = self._create_video_from_images(input_pattern, output_video)
+                        ok = create_video_from_images(input_pattern, output_video)
                         if ok:
                             video_paths.append(output_video)
 
@@ -500,7 +405,7 @@ class ReplayDemosRandomizedMapper(Mapper):
                             output_video = os.path.join(
                                 task_video_dir, f"demo_{replayed_episode_count}_{view}_depth.mp4"
                             )
-                            ok = self._create_video_from_images(input_pattern, output_video)
+                            ok = create_video_from_images(input_pattern, output_video)
                             if ok:
                                 video_paths.append(output_video)
 
@@ -535,13 +440,8 @@ class ReplayDemosRandomizedMapper(Mapper):
         samples["replay_failure_reason"] = [result.get("error", "") if not result.get("success", False) else ""]
         return samples
 
-    def cleanup(self):
-        # This will be implemented in the next step
-        logger.info("Cleaning up ReplayDemosRandomizedMapper resources...")
-        if self._env is not None:
-            self._env.close()
-            self._env = None
-        logger.info("Cleanup complete.")
+    # Use shared cleanup logic
+    from data_juicer.utils.isaac_utils import cleanup_isaac_env as cleanup
 
     def __del__(self):
         try:

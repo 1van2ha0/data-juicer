@@ -7,7 +7,8 @@ from data_juicer.ops.mapper import ReplayDemosRandomizedMapper
 
 ray.init(address='auto')
 
-ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/replay/replay_tasks.jsonl'))
+# Updated path to the new data directory
+ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/data/replay_tasks.jsonl'))
 
 replayer = ReplayDemosRandomizedMapper(
     task_name='Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-v0',
@@ -20,7 +21,8 @@ replayer = ReplayDemosRandomizedMapper(
     gpu_required=0.5,
     input_file_key='dataset_file',
     video_dir_key='video_dir',
-    visual_randomization_config='./demos/franka_mimicgen/replay/visual_randomization.yaml',
+    # Updated path to the new assets directory
+    visual_randomization_config='./demos/franka_mimicgen/assets/visual_randomization.yaml',
     accelerator='cuda',
     batch_size=1
 )

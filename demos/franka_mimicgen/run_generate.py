@@ -7,7 +7,8 @@ from data_juicer.ops.mapper import GenerateDatasetMapper
 
 ray.init(address='local')
 
-ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/generate/generate_tasks.jsonl'))
+# Updated path to the new data directory
+ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/data/generate_tasks.jsonl'))
 
 generator = GenerateDatasetMapper(
     task_name='Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Cosmos-Mimic-v0',

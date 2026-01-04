@@ -100,80 +100,6 @@ class GenerateDatasetMapper(Mapper):
             f"num_envs={self.num_envs}, batch_size=1 (one task per actor)"
         )
 
-    def _ensure_sim_app(self):
-        """Ensure Isaac Sim SimulationApp is initialized once and reused."""
-        if self._isaac_initialized:
-            return
-
-        import argparse
-        import faulthandler
-        import sys
-
-        import torch
-
-        if torch.cuda.is_initialized():
-            logger.warning("CUDA was initialized before Isaac Sim. Clearing cached state...")
-            torch.cuda.empty_cache()
-
-        if not torch.cuda.is_available():
-            raise RuntimeError(
-                "CUDA is not available. Isaac Sim requires CUDA to run. "
-                "Please verify the GPU driver and CUDA installation."
-            )
-
-        os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
-
-        logger.info(
-            "Initializing Isaac Sim SimulationApp for task %s (device=%s, headless=%s)",
-            self.task_name,
-            self.device,
-            self.headless,
-        )
-        logger.info("CUDA device count detected by torch: %d", torch.cuda.device_count())
-
-        # Swap wrapped IO streams with the real OS streams while launching SimulationApp
-        for stream_name in ("stdin", "stdout", "stderr"):
-            self._orig_streams[stream_name] = getattr(sys, stream_name, None)
-            real_stream = getattr(sys, f"__{stream_name}__", None)
-            if real_stream is not None:
-                setattr(sys, stream_name, real_stream)
-
-        from isaaclab.app import AppLauncher
-
-        parser = argparse.ArgumentParser()
-        AppLauncher.add_app_launcher_args(parser)
-        args, _ = parser.parse_known_args([])
-        args.headless = self.headless
-        args.device = self.device
-        args.enable_cameras = self.enable_cameras
-        args.enable_scene_lights = not self.headless
-
-        if self.enable_pinocchio:
-            import pinocchio  # noqa: F401
-
-        try:
-            self._faulthandler_file = open(os.devnull, "w")
-            faulthandler.enable(file=self._faulthandler_file)  # type: ignore[arg-type]
-        except Exception as exc:  # pragma: no cover - best effort logging
-            logger.debug("Failed to enable faulthandler when launching SimulationApp: %s", exc)
-            self._faulthandler_file = None
-
-        app_launcher = AppLauncher(args)
-        self._simulation_app = app_launcher.app
-
-        # Restore wrapped streams
-        for stream_name, orig_stream in self._orig_streams.items():
-            if orig_stream is not None:
-                setattr(sys, stream_name, orig_stream)
-
-        import isaaclab_mimic.envs  # noqa: F401
-
-        if self.enable_pinocchio:
-            import isaaclab_mimic.envs.pinocchio_envs  # noqa: F401
-
-        self._isaac_initialized = True
-        logger.info("Isaac Sim SimulationApp initialized successfully")
-
     def _resolve_env_name(self, input_file: str) -> str:
         if self.task_name:
             return self.task_name.split(":")[-1]
@@ -271,7 +197,9 @@ class GenerateDatasetMapper(Mapper):
 
     def _generate_dataset_for_file(self, input_file: str, output_file: str) -> Dict[str, Any]:
         """Generates mimic dataset from a single annotated source file."""
-        self._ensure_sim_app()
+        from data_juicer.utils.isaac_utils import ensure_isaac_sim_app
+
+        ensure_isaac_sim_app(self, mode="mimic")
         success_term = self._create_task_env(input_file, output_file)
         self._run_async_generation(input_file, success_term)
 
@@ -363,38 +291,8 @@ class GenerateDatasetMapper(Mapper):
         samples["generation_result"] = results
         return samples
 
-    def cleanup(self):
-        """
-        Cleanup Isaac Sim resources (called by the framework).
-
-        Only closes the Isaac Lab environment, not the simulation app.
-        Ray will manage the Actor process lifecycle.
-        """
-        logger.info("Cleaning up GenerateMimicDatasetMapper resources...")
-
-        if self._env is not None:
-            self._env.close()
-            logger.info("Closed Isaac Lab environment.")
-            self._env = None
-
-        self._success_term = None
-        self._output_file_abs = None
-
-        if self._faulthandler_file is not None:
-            try:
-                import faulthandler
-
-                faulthandler.disable()
-            except Exception:  # pragma: no cover - best effort cleanup
-                pass
-            try:
-                self._faulthandler_file.close()
-            except Exception:
-                pass
-            finally:
-                self._faulthandler_file = None
-
-        logger.info("Cleanup complete (simulation_app left for Ray to manage).")
+    # Use shared cleanup logic
+    from data_juicer.utils.isaac_utils import cleanup_isaac_env as cleanup
 
     def __del__(self):
         try:

@@ -7,7 +7,8 @@ from data_juicer.ops.mapper import AnnotateDemosMapper
 
 ray.init(address='local')
 
-ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/annotate/annotation_tasks.jsonl'))
+# Updated path to the new data directory
+ds = RayDataset(ray.data.read_json('./demos/franka_mimicgen/data/annotation_tasks.jsonl'))
 
 annotator = AnnotateDemosMapper(
     task_name='Isaac-Stack-Cube-Franka-IK-Rel-Visuomotor-Mimic-v0',

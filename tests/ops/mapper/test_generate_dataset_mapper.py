@@ -71,7 +71,6 @@ class GenerateDatasetMapperTest(DataJuicerTestCaseBase):
         from data_juicer.ops.mapper.generate_dataset_mapper import GenerateDatasetMapper
         
         op = GenerateDatasetMapper(task_name="Test-Task", headless=True, num_envs=8, generation_num_trials=1000)
-        op._ensure_sim_app = MagicMock()
         
         # Case 1: Success (File created)
         # Manually create the output file to simulate successful generation
@@ -83,10 +82,13 @@ class GenerateDatasetMapperTest(DataJuicerTestCaseBase):
             'input_file': [self.input_path],
             'output_file': [self.output_path]
         }
-        res = op.process_batched(samples)
+        # Patch the function where it is imported in the module, or patch the module where it is defined
+        # Since ensure_isaac_sim_app is imported inside the method _generate_dataset, we need to patch it in data_juicer.utils.isaac_utils
+        with patch('data_juicer.utils.isaac_utils.ensure_isaac_sim_app') as mock_ensure_app:
+            res = op.process_batched(samples)
+            mock_ensure_app.assert_called()
             
         self.assertTrue(res['generation_result'][0]['success'])
-        op._ensure_sim_app.assert_called()
         
         # Verify config passing
         mock_generation.setup_env_config.assert_called_with(
@@ -102,7 +104,10 @@ class GenerateDatasetMapperTest(DataJuicerTestCaseBase):
         if os.path.exists(self.output_path):
             os.remove(self.output_path)
             
-        res = op.process_batched(samples)
+        with patch('data_juicer.utils.isaac_utils.ensure_isaac_sim_app') as mock_ensure_app:
+            res = op.process_batched(samples)
+            mock_ensure_app.assert_called()
+            
         self.assertFalse(res['generation_result'][0]['success'])
 
 

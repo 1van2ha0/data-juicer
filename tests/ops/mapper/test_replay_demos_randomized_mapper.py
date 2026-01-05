@@ -32,6 +32,8 @@ class ReplayDemosRandomizedMapperTest(DataJuicerTestCaseBase):
         # Create dummy HDF5
         with h5py.File(self.input_path, 'w') as f:
             data = f.create_group('data')
+            # Add required env_args attribute
+            data.attrs['env_args'] = '{"env_name": "Test-Task"}'
             demo = data.create_group('demo_0')
             demo.create_dataset('initial_state', data=np.zeros(10))
             demo.create_dataset('actions', data=np.zeros((10, 7)))
@@ -94,6 +96,8 @@ class ReplayDemosRandomizedMapperTest(DataJuicerTestCaseBase):
         mock_env = MagicMock()
         mock_env.reset.return_value = (MagicMock(), {})
         mock_env.step.return_value = (MagicMock(), 0.0, False, False, {})
+        # Mock device to be a string or valid device object, not a MagicMock
+        mock_env.device = 'cpu' 
         mock_gym.make.return_value.unwrapped = mock_env
         
         # Mock parse_env_cfg to return an object we can inspect for randomization injection
@@ -122,12 +126,12 @@ class ReplayDemosRandomizedMapperTest(DataJuicerTestCaseBase):
             camera_view_list=['front'],
             visual_randomization_config=config_path
         )
-        op._ensure_sim_app = MagicMock()
         # Mock _inject_visual_randomization to avoid complex config resolution issues in test
         op._inject_visual_randomization = MagicMock()
         
         # Mock subprocess to verify ffmpeg call
-        with patch('subprocess.run') as mock_run:
+        with patch('subprocess.run') as mock_run, \
+             patch('data_juicer.utils.isaac_utils.ensure_isaac_sim_app') as mock_ensure_app:
             samples = {
                 'text': ['dummy'],
                 'dataset_file': [self.input_path],
@@ -138,7 +142,7 @@ class ReplayDemosRandomizedMapperTest(DataJuicerTestCaseBase):
             res = op.process_batched(samples)
             
             self.assertTrue(res['replay_success'][0])
-            op._ensure_sim_app.assert_called()
+            mock_ensure_app.assert_called()
             
             # Verify ffmpeg was called
             self.assertTrue(mock_run.called)

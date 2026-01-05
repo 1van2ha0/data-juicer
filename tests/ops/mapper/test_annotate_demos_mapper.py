@@ -82,9 +82,6 @@ class AnnotateDemosMapperTest(DataJuicerTestCaseBase):
         
         op = AnnotateDemosMapper(task_name="Test-Task", headless=True)
         
-        # Mock _ensure_sim_app to avoid real app launch
-        op._ensure_sim_app = MagicMock()
-        
         # Mock _create_task_env to return our mock_env and avoid importing real config classes
         # We want to test _replay_and_annotate logic, so we let it run
         def create_env_side_effect():
@@ -98,10 +95,13 @@ class AnnotateDemosMapperTest(DataJuicerTestCaseBase):
             'output_file': [self.output_path]
         }
         
-        res = op.process_batched(samples)
+        # Patch the function where it is imported in the module, or patch the module where it is defined
+        # Since ensure_isaac_sim_app is imported inside the method _annotate_file, we need to patch it in data_juicer.utils.isaac_utils
+        with patch('data_juicer.utils.isaac_utils.ensure_isaac_sim_app') as mock_ensure_app:
+            res = op.process_batched(samples)
+            mock_ensure_app.assert_called()
         
         self.assertEqual(len(res['input_file']), 1)
-        op._ensure_sim_app.assert_called()
         mock_handler.open.assert_called_with(self.input_path)
         
         # Verify Replay Logic

@@ -105,14 +105,18 @@ class TestIsaacUtils(DataJuicerTestCaseBase):
                 self._faulthandler_file = MagicMock()
         
         mapper = MockMapper()
+        mock_env = mapper._env
+        mock_fh = mapper._faulthandler_file
         
-        with patch('data_juicer.utils.isaac_utils.faulthandler') as mock_faulthandler:
+        # Patch sys.modules to intercept the 'import faulthandler' inside the function
+        mock_faulthandler = MagicMock()
+        with patch.dict(sys.modules, {'faulthandler': mock_faulthandler}):
             res = cleanup_isaac_env(mapper)
             
-            self.assertTrue(mapper._env.close.called)
+            self.assertTrue(mock_env.close.called)
             self.assertIsNone(mapper._env)
             self.assertTrue(mock_faulthandler.disable.called)
-            self.assertTrue(mapper._faulthandler_file.close.called)
+            self.assertTrue(mock_fh.close.called)
             self.assertIsNone(mapper._faulthandler_file)
             self.assertEqual(res, {"status": "cleaned"})
 

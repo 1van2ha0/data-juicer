@@ -1,5 +1,3 @@
-from typing import List
-
 from data_juicer.utils.constant import Fields
 
 from ..base_op import OPERATORS, Filter

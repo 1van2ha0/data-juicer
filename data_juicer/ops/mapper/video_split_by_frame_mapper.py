@@ -156,7 +156,14 @@ class VideoSplitByFrameMapper(Mapper):
         num_parts = math.ceil(total_frames / stride)
 
         split_video_keys = []
-        unique_video_key = transfer_filename(video_key, OP_NAME, self.save_dir, **self._init_parameters)
+        # unique_video_key = transfer_filename(video_key, OP_NAME, self.save_dir, **self._init_parameters)
+
+        if self.save_dir is not None:
+            output_dir = self.save_dir
+        else:
+            output_dir = os.path.dirname(video_key)
+
+        unique_video_key = os.path.join(output_dir, os.path.basename(video_key))
 
         for part_idx in range(num_parts):
             start_frame = part_idx * stride

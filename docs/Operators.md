@@ -46,7 +46,7 @@ Data-Juicer 中的算子分为以下 8 种类型。
 | [filter](#filter) | 54 | Filters out low-quality samples. 过滤低质量样本。 |
 | [formatter](#formatter) | 8 | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
 | [grouper](#grouper) | 3 | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
-| [mapper](#mapper) | 97 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
+| [mapper](#mapper) | 98 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
 | [pipeline](#pipeline) | 3 | Applies dataset-level processing; both input and output are datasets. 执行数据集级别的操作，输入和输出均为完整数据集。 |
 | [selector](#selector) | 5 | Selects top samples based on ranking. 基于排序选取高质量样本。 |
 
@@ -269,6 +269,7 @@ All the specific operators are listed below, each featured with several capabili
 | video_resize_aspect_ratio_mapper | 🎬Video 💻CPU 🟢Stable | Resizes videos to fit within a specified aspect ratio range. 调整视频大小以适应指定的宽高比范围。 | [info](operators/mapper/video_resize_aspect_ratio_mapper.md) | - |
 | video_resize_resolution_mapper | 🎬Video 💻CPU 🟢Stable | Resizes video resolution based on specified width and height constraints. 根据指定的宽度和高度限制调整视频分辨率。 | [info](operators/mapper/video_resize_resolution_mapper.md) | - |
 | video_split_by_duration_mapper | 🔮Multimodal 💻CPU 🟢Stable | Splits videos into segments based on a specified duration. 根据指定的持续时间将视频拆分为多个片段。 | [info](operators/mapper/video_split_by_duration_mapper.md) | - |
+| video_split_by_frame_mapper | 🔮Multimodal 💻CPU 🟡Beta | Splits videos into segments based on a specified frame count or duration. 根据指定的帧数或持续时间将视频拆分为段。 | - | - |
 | video_split_by_key_frame_mapper | 🔮Multimodal 💻CPU 🟢Stable | Splits a video into segments based on key frames. 根据关键帧将视频分割为多个片段。 | [info](operators/mapper/video_split_by_key_frame_mapper.md) | - |
 | video_split_by_scene_mapper | 🔮Multimodal 💻CPU 🟢Stable | Splits videos into scene clips based on detected scene changes. 根据检测到的场景变化将视频拆分为场景剪辑。 | [info](operators/mapper/video_split_by_scene_mapper.md) | - |
 | video_tagging_from_audio_mapper | 🎬Video 🚀GPU 🧩HF 🟢Stable | Generates video tags from audio streams using the Audio Spectrogram Transformer. 使用音频频谱图转换器从音频流生成视频标签。 | [info](operators/mapper/video_tagging_from_audio_mapper.md) | - |

@@ -6,7 +6,7 @@ import subprocess
 from typing import Optional
 
 from data_juicer.utils.constant import Fields
-from data_juicer.utils.file_utils import add_suffix_to_filename, transfer_filename
+from data_juicer.utils.file_utils import add_suffix_to_filename
 from data_juicer.utils.lazy_loader import LazyLoader
 from data_juicer.utils.mm_utils import SpecialTokens
 
@@ -156,6 +156,7 @@ class VideoSplitByFrameMapper(Mapper):
         num_parts = math.ceil(total_frames / stride)
 
         split_video_keys = []
+        # transfer_filename can be imported from data_juicer.utils.file_utils if needed
         # unique_video_key = transfer_filename(video_key, OP_NAME, self.save_dir, **self._init_parameters)
 
         if self.save_dir is not None:
@@ -180,7 +181,7 @@ class VideoSplitByFrameMapper(Mapper):
             start_time = start_frame / fps
 
             output_path = add_suffix_to_filename(unique_video_key, f"_part{part_idx + 1}")
-            
+
             # Construct FFmpeg command
             # -y: overwrite
             # -ss: start time
@@ -190,23 +191,28 @@ class VideoSplitByFrameMapper(Mapper):
             # -an: remove audio (User code has -an. Should I keep it? Maybe make it optional? User code says "VITRA seems to only focus on visual". I'll keep it for now or make it configurable via ffmpeg_extra_args. But user asked to imitate the code.)
             # I will include -an by default if it's in the user code, but maybe it's better to let ffmpeg_extra_args handle encoding options.
             # User code: "-c:v", "libx264", "-preset", "fast", "-crf", "22", "-an"
-            
+
             cmd = [
-                "ffmpeg", "-y",
-                "-ss", f"{start_time:.4f}",
-                "-i", video_key,
-                "-frames:v", str(frames_to_extract),
+                "ffmpeg",
+                "-y",
+                "-ss",
+                f"{start_time:.4f}",
+                "-i",
+                video_key,
+                "-frames:v",
+                str(frames_to_extract),
             ]
 
             # Default encoding args from user code
             # We can allow overriding via ffmpeg_extra_args
             if self.ffmpeg_extra_args:
                 import shlex
+
                 cmd.extend(shlex.split(self.ffmpeg_extra_args))
             else:
                 # Default to user's sample logic if no args provided
                 cmd.extend(["-c:v", "libx264", "-preset", "fast", "-crf", "22", "-an"])
-            
+
             cmd.extend(["-loglevel", "error", output_path])
 
             try:
@@ -235,7 +241,7 @@ class VideoSplitByFrameMapper(Mapper):
 
         # load all video(s)
         loaded_video_keys = sample[self.video_key]
-        
+
         # We don't need to pre-load video objects like in DurationMapper because we use cv2/ffmpeg per file.
 
         split_video_keys = []

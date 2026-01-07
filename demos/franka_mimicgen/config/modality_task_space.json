@@ -1,0 +1,51 @@
+{
+    "state": {
+        "franka_eef_pos": {
+            "original_key": "observation.state",
+            "start": 0,
+            "end": 3,
+            "dtype": "float32"
+        },
+        "franka_eef_quat": {
+            "original_key": "observation.state",
+            "start": 3,
+            "end": 7,
+            "dtype": "float32",
+            "rotation_type": "quaternion"
+        },
+        "franka_gripper_pos": {
+            "start": 7,
+            "end": 8,
+            "dtype": "float32"
+        }
+    },
+    "action": {
+        "franka_eef_pos": {
+            "start": 0,
+            "end": 3,
+            "dtype": "float32"
+        },
+        "franka_eef_quat": {
+            "start": 3,
+            "end": 6,
+            "dtype": "float32",
+            "rotation_type": "axis_angle"
+        },
+        "franker_gripper_pos": {
+            "start": 6,
+            "end": 7,
+            "dtype": "float32"
+        }
+    },
+    "video": {
+        "table_view": {
+            "original_key": "observation.images.table_view"
+        }
+    },
+    "annotation": {
+        "human.action.task_description": {
+        },
+        "human.validity": {
+        }
+    }
+}

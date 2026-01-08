@@ -78,6 +78,8 @@ from .remove_words_with_incorrect_substrings_mapper import (
 )
 from .replace_content_mapper import ReplaceContentMapper
 from .replay_demos_randomized_mapper import ReplayDemosRandomizedMapper
+from .s3_download_file_mapper import S3DownloadFileMapper
+from .s3_upload_file_mapper import S3UploadFileMapper
 from .sdxl_prompt2prompt_mapper import SDXLPrompt2PromptMapper
 from .sentence_augmentation_mapper import SentenceAugmentationMapper
 from .sentence_split_mapper import SentenceSplitMapper
@@ -181,6 +183,8 @@ __all__ = [
     "RemoveTableTextMapper",
     "RemoveWordsWithIncorrectSubstringsMapper",
     "ReplaceContentMapper",
+    "S3DownloadFileMapper",
+    "S3UploadFileMapper",
     "SDXLPrompt2PromptMapper",
     "SentenceAugmentationMapper",
     "SentenceSplitMapper",
